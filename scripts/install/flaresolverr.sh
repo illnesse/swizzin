@@ -48,7 +48,7 @@ chown -R ${user}: /opt/.venv/flaresolverr
 echo_progress_start "Downloading and extracting flaresolverr"
 mkdir -p /opt/flaresolverr
 cd /opt/flaresolverr
-git clone --depth 1 --branch v3.3.2 https://github.com/FlareSolverr/FlareSolverr
+git clone --depth 1 --branch v3.3.16 https://github.com/FlareSolverr/FlareSolverr
 cd FlareSolverr
 echo_progress_done
 
