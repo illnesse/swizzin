@@ -124,7 +124,7 @@ echo "deb [signed-by=/usr/share/keyrings/jellyfin-archive-keyring.gpg arch=$(dpk
 #
 # install jellyfin and jellyfin-ffmepg using apt functions.
 apt_update #forces apt refresh
-apt_install jellyfin 
+apt_install jellyfin-server
 #jellyfin-ffmpeg5
 #
 # Add the jellyfin user to the master user's group.
