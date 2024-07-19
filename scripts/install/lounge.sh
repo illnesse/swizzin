@@ -6,8 +6,8 @@ function _install() {
 
     useradd lounge --system -m -d /opt/lounge
 
-    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-    apt_install nodejs
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    apt install -y nodejs
 
 #    npm -g config set user root || {
 #        echo_error "npm config step failed"
