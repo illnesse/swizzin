@@ -32,6 +32,10 @@ _install() {
 
         sed -i "s|(2, 31)|(2, 11)|g" /tmp/calibre-installer.sh
 
+        #quick stupid fix for glibc mismatch
+        sed -i "s|(2, 34)|(2, 11)|g" /tmp/calibre-installer.sh
+        sed -i "s|(2, 35)|(2, 11)|g" /tmp/calibre-installer.sh
+
         if ! bash /tmp/calibre-installer.sh install_dir=/opt >> $log 2>&1; then
             echo_error "failed to install calibre"
             exit 1
