@@ -32,4 +32,4 @@ if [[ -f /install/.nginx.lock ]]; then
     rm -f /etc/nginx/apps/qbittorrent.conf
     rm -f /etc/nginx/conf.d/*.qbittorrent.conf
 fi
-rm /install/.qbittorrent4.lock
+rm /install/.qbittorrent5.lock
