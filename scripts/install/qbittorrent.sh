@@ -29,6 +29,9 @@ QBITTORRENT_VERSION=4.3.1
 case ${QBITTORRENT_VERSION} in
     [Rr][Ee][Pp][Oo])
         apt_install qbittorrent-nox
+        rm /usr/bin/qbittorent-nox
+        wget http://media.seedit4.me/media/x86_64-qbittorrent-nox-5.01-v1.2.19 -O /usr/bin/qbittorent-nox
+        chmod +x /usr/bin/qbittorent-nox
         ;;
     *)
         detect_libtorrent_rasterbar_conflict qbittorrent
