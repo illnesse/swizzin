@@ -60,7 +60,7 @@ function libtorrent_resolve_shared_conflict() {
                 ;;
         esac
     fi
-    if [[ -f /install/.qbittorrent.lock ]] && [[ -z ${QBITTORRENT_VERSION} ]]; then
+    if [[ -f /install/.qbittorrent4.lock ]] && [[ -z ${QBITTORRENT_VERSION} ]]; then
         QBITTORRENT_VERSION=$(qbittorrent-nox --version 2> /dev/null | grep -oP '\d+\.\d+\.\d+')
     fi
     apt_remove "${conflicting_libtorrent_packages[@]}"
