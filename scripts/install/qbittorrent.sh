@@ -22,16 +22,16 @@ if [[ -n $1 ]]; then
     exit 0
 fi
 
-QBITTORRENT_VERSION=4.3.1
+QBITTORRENT_VERSION=repo
 
 #whiptail_qbittorrent
 
 case ${QBITTORRENT_VERSION} in
     [Rr][Ee][Pp][Oo])
         apt_install qbittorrent-nox
-        rm /usr/bin/qbittorent-nox
-        wget http://media.seedit4.me/media/x86_64-qbittorrent-nox-5.01-v1.2.19 -O /usr/bin/qbittorent-nox
-        chmod +x /usr/bin/qbittorent-nox
+        rm /usr/bin/qbittorrent-nox
+        wget http://media.seedit4.me/media/x86_64-qbittorrent-nox-5.01-v1.2.19 -O /usr/bin/qbittorrent-nox
+        chmod +x /usr/bin/qbittorrent-nox
         ;;
     *)
         detect_libtorrent_rasterbar_conflict qbittorrent
