@@ -21,6 +21,7 @@ apt_install python3
 cd /opt
 echo_progress_start "Cloning latest Tautulli repo"
 git clone https://github.com/Tautulli/Tautulli.git tautulli >> "${log}" 2>&1
+pip install backports.zoneinfo >> "${log}" 2>&1
 echo_progress_done
 
 echo_progress_start "Adding user and setting up Tautulli"
