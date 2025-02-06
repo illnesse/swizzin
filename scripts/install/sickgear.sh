@@ -47,7 +47,7 @@ else
     pyenv_create_venv 3.7.7 /opt/.venv/sickgear
 fi
 echo_progress_start "Installing python requirements"
-/opt/.venv/sickgear/bin/pip3 install lxml regex scandir soupsieve cheetah3 >> $log 2>&1
+/opt/.venv/sickgear/bin/pip3 install lxml regex scandir soupsieve wheel cheetah3 >> $log 2>&1
 chown -R ${user}: /opt/.venv/sickgear
 echo_progress_done
 
