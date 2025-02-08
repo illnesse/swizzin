@@ -1,11 +1,12 @@
 #!/bin/bash
 
 user=$(grep User= /etc/systemd/system/sonarr.service | cut -d= -f2)
-if ask "Would you like to purge the configuration?" Y; then
-    if [[ -d /home/${user}/.config/Sonarr ]]; then
-        rm -rf "/home/${user}/.config/Sonarr"
-    fi
-fi
+#if ask "Would you like to purge the configuration?" Y; then
+#    if [[ -d /home/${user}/.config/Sonarr ]]; then
+#        rm -rf "/home/${user}/.config/Sonarr"
+#    fi
+#fi
+rm -rf /var/lib/sonarr
 rm -rf /opt/Sonarr
 if [[ -f /install/.nginx.lock ]]; then
     rm /etc/nginx/apps/sonarr.conf
