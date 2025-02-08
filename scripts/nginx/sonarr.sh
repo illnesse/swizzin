@@ -68,7 +68,7 @@ cat > "$app_configdir"/config.xml << ARRCONFIG
   <EnableSsl>False</EnableSsl>
   <LaunchBrowser>False</LaunchBrowser>
   <ApiKey>${apikey}</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>External</AuthenticationMethod>
   <UrlBase>$app_baseurl</UrlBase>
   <Branch>$app_branch</Branch>
 </Config>
