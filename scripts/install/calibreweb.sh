@@ -49,29 +49,31 @@ function _install_calibreweb() {
     apt_install python3-pip python3-dev python3-venv
     mkdir -p /opt/.venv/calibreweb
     echo_progress_start "Creating venv for calibreweb"
-    python3 -m venv /opt/.venv/calibreweb
     echo_progress_done "Venv created"
 
-    echo_progress_start "Downloading calibreweb source code archive"
-    dlurl=$(curl -s https://api.github.com/repos/janeczku/calibre-web/releases/latest | jq -r '.zipball_url') || {
-        echo_error "Failed to query github"
-        exit 1
-    }
 
-    wget -q "${dlurl}" -O /tmp/calibreweb.zip >> $log 2>&1 || {
-        echo_error "Failed to download source code"
-        exit 1
-    }
 
-    echo_progress_done
+    # echo_progress_start "Downloading calibreweb source code archive"
+    # dlurl=$(curl -s https://api.github.com/repos/janeczku/calibre-web/releases/latest | jq -r '.zipball_url') || {
+    #     echo_error "Failed to query github"
+    #     exit 1
+    # }
 
-    echo_progress_start "Extracting archive"
-    unzip /tmp/calibreweb.zip -d /tmp/calibrewebdir >> $log 2>&1
-    subdir=$(ls /tmp/calibrewebdir)
-    mv /tmp/calibrewebdir/"$subdir" $calibrewebdir
-    echo_progress_done
+    # wget -q "${dlurl}" -O /tmp/calibreweb.zip >> $log 2>&1 || {
+    #     echo_error "Failed to download source code"
+    #     exit 1
+    # }
+
+    # echo_progress_done
+
+    # echo_progress_start "Extracting archive"
+    # unzip /tmp/calibreweb.zip -d /tmp/calibrewebdir >> $log 2>&1
+    # subdir=$(ls /tmp/calibrewebdir)
+    # mv /tmp/calibrewebdir/"$subdir" $calibrewebdir
+    # echo_progress_done
 
     echo_progress_start "Creating users and setting permissions"
+    mkdir -p "$calibrewebdir"
     useradd $clbWebUser --system -d "$calibrewebdir" >> $log 2>&1
     chown -R $clbWebUser:$clbWebUser $calibrewebdir
     chown -R ${clbWebUser}: /opt/.venv/calibreweb
@@ -81,13 +83,11 @@ function _install_calibreweb() {
 
     echo_progress_start "Installing python dependencies"
     apt_install libbz2-dev liblzma-dev libjpeg-dev zlib1g-dev
-    sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install --upgrade pip" >> $log 2>&1
-    sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install wheel" >> $log 2>&1
-    sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install setuptools_rust Pillow rust" >> $log 2>&1
-    sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install -r $calibrewebdir/requirements.txt" >> $log 2>&1
+    sudo -u $clbWebUser bash -c "python3 -m venv /opt/.venv/calibreweb && source /opt/.venv/calibreweb/bin/activate  && pip install setuptools_rust Pillow rust wheel calibreweb calibreweb[metadata] calibreweb[goodreads] calibreweb[comics] calibreweb[kobo] calibreweb[gmail] calibreweb[gdrive]" >> $log 2>&1
+    
     #fuck ldap. all my homies hate ldap
-    sed '/ldap/Id' -i $calibrewebdir/optional-requirements.txt
-    sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install -r $calibrewebdir/optional-requirements.txt" >> $log 2>&1
+    # sed '/ldap/Id' -i $calibrewebdir/optional-requirements.txt
+    # sudo -u ${clbWebUser} bash -c "/opt/.venv/calibreweb/bin/pip3 install -r $calibrewebdir/optional-requirements.txt" >> $log 2>&1
     echo_progress_done
 }
 
@@ -120,7 +120,7 @@ Description=calibreweb
 [Service]
 User=$clbWebUser
 Type=simple
-ExecStart=/opt/.venv/calibreweb/bin/python3 $calibrewebdir/cps.py
+ExecStart=/opt/.venv/calibreweb/bin/cps
 WorkingDirectory=$calibrewebdir
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/.venv/calibreweb/bin
 
@@ -156,7 +156,8 @@ _post_libdir() {
 _post_changepass() {
     sleep 5
     pass="$(_get_user_password "$CALIBRE_LIBRARY_USER")"
-    /opt/.venv/calibreweb/bin/python3 /opt/calibreweb/cps.py -s admin:"${pass}" >> "$log" 2>&1 || {
+    #/opt/.venv/calibreweb/bin/python3 /opt/calibreweb/cps.py
+    sudo -u $clbWebUser /opt/.venv/calibreweb/bin/cps -s admin:"${pass}" >> "$log" 2>&1 || {
         echo_info "Could not change password, please use admin:admin123 to log in and change credentials immediately."
         return 1
     }
@@ -165,7 +166,7 @@ _post_changepass() {
 
 _install_dependencies_calibreweb
 _install_calibreweb
-_install_kepubify
+# _install_kepubify
 
 #sqlite hack 	3.35.4
 codename=$(lsb_release -cs)

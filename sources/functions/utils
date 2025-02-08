@@ -89,7 +89,7 @@ function rm_if_exists() {
 function port() {
     LOW_BOUND=$1
     UPPER_BOUND=$2
-    comm -23 <(seq ${LOW_BOUND} ${UPPER_BOUND} | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1
+    comm -23 <(seq ${LOW_BOUND} ${UPPER_BOUND} | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf -n 1
 }
 
 # Checks if there is enough RAM and Swap in total

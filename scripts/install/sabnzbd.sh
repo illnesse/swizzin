@@ -94,6 +94,7 @@ host = 0.0.0.0
 port = 65080
 download_dir = ~/Downloads/incomplete
 complete_dir = ~/Downloads/complete
+url_base = "sabnzbd"
 ionice = -c2 -n5
 par_option = -t4
 nice = -n10

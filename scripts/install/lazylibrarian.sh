@@ -34,7 +34,7 @@ cd lazylibrarian
 
 echo_progress_start "Checking python depends"
 sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install --upgrade pip" >> $log 2>&1
-sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install urllib3 apprise cryptography pyopenssl pillow" >> $log 2>&1
+sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install urllib3 apprise cryptography pyopenssl pillow pyparsing" >> $log 2>&1
 echo_progress_done "Dependencies installed"
 
 

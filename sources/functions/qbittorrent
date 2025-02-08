@@ -475,6 +475,13 @@ function qbittorrent_user_config() {
         QBTWP="WebUI\Password_PBKDF2=\"@ByteArray($hashed)\""
     fi
 
+    cores=$(nproc)
+    if [ "$cores" -eq 2 ]; then
+        iothreads=2
+    else
+        iothreads=$((cores / 2))
+    fi
+
     usermod -a -G ${user} www-data 2>> $log
     #port=$(port 10000 11000)
     port=9148
@@ -487,6 +494,7 @@ function qbittorrent_user_config() {
     cat > /home/${user}/.config/qBittorrent/qBittorrent.conf << QBTCONF
 [BitTorrent]
 Session\DisableAutoTMMByDefault=false
+Session\AsyncIOThreadsCount=${iothreads}
 
 [Preferences]
 Bittorrent\DHT=false
@@ -498,6 +506,7 @@ Bittorrent\MaxUploads=-1
 Bittorrent\MaxUploadsPerTorrent=-1
 Connection\PortRangeMin=${xport}
 
+Downloads\DiskWriteCacheSize=24
 Downloads\PreAllocation=true
 
 Downloads\SavePath=/home/${user}/torrents/qbittorrent/

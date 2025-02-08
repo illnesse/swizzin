@@ -33,6 +33,13 @@ function whiptail_rtorrent() {
                 export libtorrentver='0.13.8'
                 ;;
 
+            0.10.0 | '0.10.0')
+                export rtorrentver='0.10.0'
+                export libtorrentver='0.14.0'
+                export libudns='false'
+                export rtorrentpgo='false'
+                ;;
+
             Repo)
                 export rtorrentver='repo'
                 export libtorrentver='repo'
@@ -51,7 +58,7 @@ function depends_rtorrent() {
         APT='subversion dos2unix bc screen zip unzip sysstat build-essential comerr-dev
     dstat automake libtool libcppunit-dev libssl-dev pkg-config libcurl4-openssl-dev
     libsigc++-2.0-dev unzip curl libncurses5-dev yasm fontconfig libfontconfig1
-    libfontconfig1-dev mediainfo'
+    libfontconfig1-dev mediainfo autoconf-archive'
         apt_install $APT
 
         . /etc/swizzin/sources/functions/fpm
@@ -82,7 +89,7 @@ function build_xmlrpc-c() {
     XMLRPC_REV=2954
     svn co http://svn.code.sf.net/p/xmlrpc-c/code/advanced@$XMLRPC_REV /tmp/xmlrpc-c >> $log 2>&1 || { svn co https://github.com/mirror/xmlrpc-c/trunk/advanced@$XMLRPC_REV /tmp/xmlrpc-c >> $log 2>&1; }
     cd /tmp/xmlrpc-c
-    ./configure --prefix=/usr --disable-cplusplus --disable-wininet-client --disable-libwww-client >> $log 2>&1 || {
+    ./configure --prefix=/usr --disable-cplusplus --disable-wininet-client --disable-libwww-client --disable-abyss-server --disable-cgi-server >> $log 2>&1 || {
         echo_error "Something went wrong while configuring xmlrpc"
         exit 1
     }

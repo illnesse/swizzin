@@ -12,13 +12,7 @@ function install_fpm() {
         fi
         apt_install ruby ruby-dev libffi-dev
         echo_progress_start "Installing fpm through ruby/gem"
-        case $(_os_codename) in
-            stretch | bionic | buster)
-                gem install public_suffix -v 4.0.7 >> $log 2>&1
-                ;;
-            *) ;;
-        esac
-        gem install fpm >> $log 2>&1
+        gem install fpm -f >> $log 2>&1
         ln -s /usr/local/bin/fpm /bin/fpm
         echo_progress_done
     fi

@@ -18,7 +18,7 @@
 #   under the GPL along with build & install instructions.
 
 # Install fuse
-apt_install fuse
+apt_install fuse3
 sed -i -e 's/#user_allow_other/user_allow_other/' /etc/fuse.conf
 
 echo_progress_start "Downloading and installing rclone"

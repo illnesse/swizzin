@@ -34,9 +34,10 @@ chown ${user}: /opt/.venv
 
 #minver 3.7.2
 if [[ ! $codename =~ ("stretch"|"bionic") ]]; then
-    apt_install git-core openssl libssl-dev python3 python3-pip python3-dev python3-venv
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    apt_install git-core openssl libssl-dev python3.10 python3.10-venv python3-pip python3.10-dev
     echo_progress_start "Setting up venv for Sickgear"
-    python3 -m venv /opt/.venv/sickgear
+    python3.10 -m venv /opt/.venv/sickgear
     echo_progress_done
 else
     apt_install git-core openssl libssl-dev
@@ -47,7 +48,7 @@ else
     pyenv_create_venv 3.7.7 /opt/.venv/sickgear
 fi
 echo_progress_start "Installing python requirements"
-/opt/.venv/sickgear/bin/pip3 install lxml regex scandir soupsieve cheetah3 >> $log 2>&1
+/opt/.venv/sickgear/bin/pip3 install CT3 lxml regex scandir soupsieve wheel cheetah3 >> $log 2>&1
 chown -R ${user}: /opt/.venv/sickgear
 echo_progress_done
 
@@ -56,6 +57,8 @@ install_rar
 echo_progress_start "Cloning Sickgear"
 git clone https://github.com/SickGear/SickGear.git /opt/sickgear >> ${log} 2>&1
 chown -R $user:$user /opt/sickgear
+/opt/.venv/sickgear/bin/pip3 install -r /opt/sickgear/requirements.txt
+/opt/.venv/sickgear/bin/pip3 install -r /opt/sickgear/recommended.txt
 echo_progress_done
 
 echo_progress_start "Installing systemd service"

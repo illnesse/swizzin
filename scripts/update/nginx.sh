@@ -21,6 +21,9 @@ function update_nginx() {
         fi
     fi
 
+    #not sure why this is preinstalled on the template, unused and caused upgrade issues so lets remove it
+    apt_remove libnginx-mod-http-geoip
+
     LIST="php8.0-fpm php8.0-cli php8.0-dev php8.0-xml php8.0-curl php8.0-mcrypt php8.0-mbstring php8.0-xml"
     #php-geoip php-json
 
@@ -52,6 +55,9 @@ function update_nginx() {
         apt_remove --purge php8.1*
     elif [[ -d /etc/php/8.2 ]]; then
         apt_remove --purge php8.2*
+    elif [[ -d /etc/php/8.3 ]]; then
+        apt_remove --purge php8.3*
+
     fi
 
     . /etc/swizzin/sources/functions/php
