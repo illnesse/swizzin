@@ -11,10 +11,6 @@ export log=/root/logs/swizzin.log
 touch $log
 # Set variables
 user=$(_get_master_username)
-app_name="sonarr"
-app_dir="/opt/${app_name^}"
-app_binary="${app_name^}"
-app_configdir="/home/$user/.config/sonarr4k"
 
 if [ ! -f "/install/.sonarr.lock" ]; then
     echo_error "sonarr is not installed."
@@ -22,8 +18,8 @@ if [ ! -f "/install/.sonarr.lock" ]; then
 fi
 
 echo_progress_start "Making data directory and owning it to ${user}"
-mkdir -p "$app_configdir"
-chown -R "$user":"$user" "$app_configdir"
+mkdir -p "/home/$user/.config/sonarr4k"
+chown -R "$user":"$user" /home/$user/.config/sonarr4k
 echo_progress_done "Data Directory created and owned."
 
 echo_progress_start "Installing systemd service file"
@@ -41,17 +37,10 @@ Group=${user}
 UMask=0002
 
 Type=simple
-# Change the path to ${app_name^} here if it is in a different location for you.
-ExecStart=$app_dir/$app_binary -nobrowser -data=$app_configdir
+ExecStart=/usr/bin/mono --debug /opt/Sonarr/Sonarr.exe -nobrowser -data=/home/${user}/.config/sonarr4k
 TimeoutStopSec=20
 KillMode=process
 Restart=on-failure
-# These lines optionally isolate (sandbox) ${app_name^} from the rest of the system.
-# Make sure to add any paths it might use to the list below (space-separated).
-#ReadWritePaths=$app_dir /path/to/media/folder
-#ProtectSystem=strict
-#PrivateDevices=true
-#ProtectHome=true
 
 [Install]
 WantedBy=multi-user.target
@@ -103,7 +92,7 @@ cat > /home/${user}/.config/sonarr4k/config.xml << EOSC
   <SslPort>9898</SslPort>
   <EnableSsl>False</EnableSsl>
   <LaunchBrowser>False</LaunchBrowser>
-  <AuthenticationMethod>External</AuthenticationMethod>
+  <AuthenticationMethod>None</AuthenticationMethod>
   <UrlBase>sonarr4k</UrlBase>
   <UpdateAutomatically>False</UpdateAutomatically>
 </Config>
