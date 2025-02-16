@@ -25,7 +25,6 @@ location /$app_baseurl {
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Host \$host;
     proxy_set_header X-Forwarded-Proto \$scheme;
-    proxy_set_header X-Real-IP \$remote_addr;
     proxy_redirect off;
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
@@ -66,7 +65,6 @@ cat > "$app_configdir"/config.xml << ARRCONFIG
   <BindAddress>127.0.0.1</BindAddress>
   <Port>$app_port</Port>
   <SslPort>$app_sslport</SslPort>
-  <SslCertHash></SslCertHash>
   <EnableSsl>False</EnableSsl>
   <LaunchBrowser>False</LaunchBrowser>
   <ApiKey>${apikey}</ApiKey>
@@ -75,11 +73,6 @@ cat > "$app_configdir"/config.xml << ARRCONFIG
   <Branch>$app_branch</Branch>
 </Config>
 ARRCONFIG
-
-
-if [[ -f /install/.rutorrent.lock ]]; then
-    sqlite3 "$app_configdir"/sonarr.db "INSERT or REPLACE INTO Config VALUES('6', 'certificatevalidation', 'DisabledForLocalAddresses');"
-fi
 
 chown -R "$user":"$user" "$app_configdir"
 
