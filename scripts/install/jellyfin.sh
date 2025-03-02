@@ -135,9 +135,11 @@ systemctl stop jellyfin >> $log 2>&1
 killall -u jellyfin
 sleep 5
 mkdir -p '/home/'${username}'/jellyfin/';
+mv "/var/lib/jellyfin/" /home/${username}/
+
+
 mkdir -p '/home/'${username}'/jellyfin/cache/transcodes';
 chown -R jellyfin:jellyfin  '/home/'${username}'/jellyfin/';
-mv "/var/lib/jellyfin/" /home/${username}/
 rm -rf /var/cache/jellyfin
 
 ln -s '/home/'${username}'/jellyfin' '/var/lib/jellyfin'
