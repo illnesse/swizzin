@@ -138,7 +138,7 @@ mkdir -p '/home/'${username}'/jellyfin/';
 mkdir -p '/home/'${username}'/jellyfin/cache/transcodes';
 chown -R jellyfin:jellyfin  '/home/'${username}'/jellyfin/';
 mv "/var/lib/jellyfin/" /home/${username}/
-rm -rf /var/cache/jellyfin/transcodes
+rm -rf /var/cache/jellyfin
 
 ln -s '/home/'${username}'/jellyfin' '/var/lib/jellyfin'
 ln -s '/home/'${username}'/jellyfin/cache' '/var/cache/jellyfin'
