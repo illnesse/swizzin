@@ -34,9 +34,9 @@ cd lazylibrarian
 
 echo_progress_start "Checking python depends"
 sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install --upgrade pip" >> $log 2>&1
-sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install urllib3 apprise cryptography pyopenssl pillow pyparsing" >> $log 2>&1
+sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install wheel" >> $log 2>&1
+sudo -u ${user} bash -c "/opt/.venv/lazylibrarian/bin/pip3 install ." >> $log 2>&1
 echo_progress_done "Dependencies installed"
-
 
 echo_progress_start "Enabling lazylibrarian Systemd configuration"
 cat > /etc/systemd/system/lazylibrarian.service << SUBSD
@@ -52,7 +52,7 @@ UMask=0002
 Restart=on-failure
 RestartSec=5
 Type=simple
-ExecStart=/opt/.venv/lazylibrarian/bin/python3 /opt/lazylibrarian/LazyLibrarian.py
+ExecStart=/opt/.venv/lazylibrarian/bin/python3 /opt/lazylibrarian/LazyLibrarian.py --daemon
 KillSignal=SIGINT
 TimeoutStopSec=20
 SyslogIdentifier=lazylibrarian.${user}
