@@ -120,7 +120,7 @@ CONFIG
 #
 # Add the jellyfin official repository and key to our installation so we can use apt-get to install it jellyfin and jellyfin-ffmepg.
 curl -s "https://repo.jellyfin.org/$DIST_ID/jellyfin_team.gpg.key" | gpg --dearmor > /usr/share/keyrings/jellyfin-archive-keyring.gpg 2>> "${log}"
-echo "deb [signed-by=/usr/share/keyrings/jellyfin-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://repo.jellyfin.org/$DIST_ID $DIST_CODENAME main unstable" > /etc/apt/sources.list.d/jellyfin.list
+echo "deb [signed-by=/usr/share/keyrings/jellyfin-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://repo.jellyfin.org/$DIST_ID $DIST_CODENAME main" > /etc/apt/sources.list.d/jellyfin.list
 #
 # install jellyfin and jellyfin-ffmepg using apt functions.
 apt_update #forces apt refresh
@@ -134,10 +134,16 @@ sleep 5
 systemctl stop jellyfin >> $log 2>&1
 killall -u jellyfin
 sleep 5
-mkdir '/home/'${username}'/jellyfin/';
-chown -R jellyfin:jellyfin  '/home/'${username}'/jellyfin/';
+mkdir -p '/home/'${username}'/jellyfin/';
 mv "/var/lib/jellyfin/" /home/${username}/
+
+
+mkdir -p '/home/'${username}'/jellyfin/cache/transcodes';
+chown -R jellyfin:jellyfin  '/home/'${username}'/jellyfin/';
+rm -rf /var/cache/jellyfin
+
 ln -s '/home/'${username}'/jellyfin' '/var/lib/jellyfin'
+ln -s '/home/'${username}'/jellyfin/cache' '/var/cache/jellyfin'
 #chown jellyfin:adm '/var/lib/jellyfin'
 sleep 5
 
@@ -147,6 +153,7 @@ chown jellyfin:jellyfin /etc/jellyfin/dlna.xml
 chown jellyfin:jellyfin /etc/jellyfin/network.xml
 chown jellyfin:root /etc/jellyfin/logging.default.json
 chown jellyfin:adm /etc/jellyfin
+
 #
 # Restart the jellyfin service to make sure our changes take effect
 systemctl -q start "jellyfin.service"
