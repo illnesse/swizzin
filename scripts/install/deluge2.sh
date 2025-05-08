@@ -37,10 +37,12 @@ fi
 
 #whiptail_deluge
 
-export DELUGE_VERSION=master
+export DELUGE_VERSION=repo
 
 case $DELUGE_VERSION in
     [Rr][Ee][Pp][Oo])
+
+        add-apt-repository -y ppa:deluge-team/stable
         apt_install_deluge
         ;;
     *)
