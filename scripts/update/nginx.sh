@@ -47,44 +47,42 @@ function update_nginx() {
         fi
     fi
 
-    if [[ -d /etc/php/7.4 ]]; then
-        apt_remove --purge php7*
-    elif [[ -d /etc/php/7.1 ]]; then
-        apt_remove --purge php7*
-    elif [[ -d /etc/php/8.1 ]]; then
-        apt_remove --purge php8.1*
-    elif [[ -d /etc/php/8.2 ]]; then
-        apt_remove --purge php8.2*
-    elif [[ -d /etc/php/8.3 ]]; then
-        apt_remove --purge php8.3*
-
-    fi
+    # Purge all PHP versions except 8.0
+    for phpdir in /etc/php/*; do
+        if [[ -d "$phpdir" ]]; then
+            phpver=$(basename "$phpdir")
+            if [[ "$phpver" != "8.0" ]]; then
+                echo "Purging PHP version $phpver"
+                apt_remove --purge php${phpver}*
+            fi
+        fi
+    done
 
     . /etc/swizzin/sources/functions/php
     phpversion=$(php_service_version)
     sock="php${phpversion}-fpm"
 
     if [[ $phpversion != "8.0" ]]; then
-      echo "wrong php version: $phpversion cleaning up";
-      sudo update-alternatives --set php /usr/bin/php8.0;
+        echo "wrong php version: $phpversion cleaning up"
+        sudo update-alternatives --set php /usr/bin/php8.0
     fi
 
-#    _apt_reset
-#    #also purge this guy
-#    if check_installed "php8.0-xmlrpc"; then
-#      apt purge -y "php8.0-xmlrpc" > /dev/null 2>&1;
-#    fi
-#
-#    PURGE="5.6 7.0 7.1 7.2 7.4";
-#    for ver in $PURGE; do
-#        apt purge -y "php$ver*" > /dev/null 2>&1;
-#        rm -rf "/etc/php/$ver";
-#    done;
-#
-#    if [[ ! -f /install/.nextcloud.lock ]]; then
-#        apt_remove --purge "php7.3*" > /dev/null 2>&1;
-#        rm -rf "/etc/php/7.3";
-#    fi
+    #    _apt_reset
+    #    #also purge this guy
+    #    if check_installed "php8.0-xmlrpc"; then
+    #      apt purge -y "php8.0-xmlrpc" > /dev/null 2>&1;
+    #    fi
+    #
+    #    PURGE="5.6 7.0 7.1 7.2 7.4";
+    #    for ver in $PURGE; do
+    #        apt purge -y "php$ver*" > /dev/null 2>&1;
+    #        rm -rf "/etc/php/$ver";
+    #    done;
+    #
+    #    if [[ ! -f /install/.nextcloud.lock ]]; then
+    #        apt_remove --purge "php7.3*" > /dev/null 2>&1;
+    #        rm -rf "/etc/php/7.3";
+    #    fi
 
     for version in $phpv; do
         if [[ -f /etc/php/$version/fpm/php.ini ]]; then
@@ -282,9 +280,9 @@ FIAC
     # fix /etc/nginx/sites-enabled/default to not cause nginx to fail on reloading when there are subdirectories in /etc/nginx/apps like /etc/nginx/apps/authelia
     sed 's|include /etc/nginx/apps/\*;|include /etc/nginx/apps/\*.conf;|g' -i /etc/nginx/sites-enabled/default
 
-# we will do this in tools update
-#    . /etc/swizzin/sources/functions/php
-#    restart_php_fpm
+    # we will do this in tools update
+    #    . /etc/swizzin/sources/functions/php
+    #    restart_php_fpm
     systemctl reload nginx
 }
 
