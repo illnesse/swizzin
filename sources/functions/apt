@@ -114,16 +114,16 @@ export -f _apt_logcheck_mark
 _apt_logcheck() {
     if _get_last_apt_log | grep -q 'E:'; then
         if _get_last_apt_log | grep -q 'allow-downgrades'; then
-          echo_warn "Ignoring Apt downgrade."
+            echo_warn "Ignoring Apt downgrade."
         else
-          echo_info "Dumping apt log errors"
-          _get_last_apt_log | grep 'E:'
-          if [[ $_apt_ignore_errors != "true" ]]; then
-              echo_error "Apt failed."
-              exit 1
-          else
-              echo_warn "Apt failed. Please consult errors above and/or in the log."
-          fi
+            echo_info "Dumping apt log errors"
+            _get_last_apt_log | grep 'E:'
+            if [[ $_apt_ignore_errors != "true" ]]; then
+                echo_error "Apt failed."
+                exit 1
+            else
+                echo_warn "Apt failed. Please consult errors above and/or in the log."
+            fi
         fi
     else
         echo_log_only "No failures in apt log found"
@@ -198,7 +198,7 @@ _apt_update() {
     echo_log_only "Apt log age = $((now - last_update)), update is forced= $_update_is_forced"
     if [ $((now - last_update)) -gt $_max_apt_age ] || [ "$_update_is_forced" = "true" ]; then
         echo_progress_start "Performing apt update"
-        apt-get update >> $log 2>&1
+        apt-get update --allow-releaseinfo-change >> $log 2>&1
         _apt_logcheck
         echo_progress_done
     else

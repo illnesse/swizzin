@@ -132,6 +132,11 @@ function _clr() {
 #shellcheck disable=SC2120
 function _update() {
     echo_progress_start "Updating swizzin local repository"
+
+    # First run the fixapt script to handle repository changes
+    bash /etc/swizzin/scripts/update/03-fixapt.sh
+
+    # Then run apt_upgrade
     apt_upgrade >> "${log}" 2>&1
 
     cd /etc/swizzin
