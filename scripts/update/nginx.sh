@@ -47,11 +47,11 @@ function update_nginx() {
         fi
     fi
 
-    # Purge all PHP versions except 8.0
+    # Purge all PHP versions except 8.0 and 7.3
     for phpdir in /etc/php/*; do
         if [[ -d "$phpdir" ]]; then
             phpver=$(basename "$phpdir")
-            if [[ "$phpver" != "8.0" ]]; then
+            if [[ "$phpver" != "8.0" && "$phpver" != "7.3" ]]; then
                 echo "Purging PHP version $phpver"
                 apt_remove --purge php${phpver}*
             fi
