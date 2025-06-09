@@ -357,6 +357,12 @@ function ltconfig() {
             if [[ -f /etc/skel/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg ]]; then rm -f /etc/skel/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg; fi
             if [[ -f /home/${u}/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg ]]; then rm -f /home/${u}/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg; fi
             ;;
+        2.2*)
+            ltcver=2.0.0
+            py=
+            if [[ -f /etc/skel/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg ]]; then rm -f /etc/skel/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg; fi
+            if [[ -f /home/${u}/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg ]]; then rm -f /home/${u}/.config/deluge/plugins/ltConfig-0.3.1-py2.7.egg; fi
+            ;;
     esac
     if [[ ! -f /etc/skel/.config/deluge/plugins/ltConfig-${ltcver}${py}.egg ]]; then
         cd /etc/skel/.config/deluge/plugins/
@@ -376,7 +382,7 @@ function ltconfig() {
 function _dconf() {
     pt_config=$(cat /home/seedit4me/.pt_config)
     port=$(cat /home/seedit4me/.deluge_port)
-        
+
     for u in "${users[@]}"; do
         echo_progress_start "Configuring Deluge for $u"
         if [[ ${u} == ${master} ]]; then
@@ -386,8 +392,14 @@ function _dconf() {
         fi
         n=$RANDOM
         DPORT=$((n % 59000 + 10024))
-        DWSALT=$( head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32; echo "" )
-        localpass=$( head /dev/urandom | tr -dc a-z0-9 | head -c 40; echo "" )
+        DWSALT=$(
+            head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32
+            echo ""
+        )
+        localpass=$(
+            head /dev/urandom | tr -dc a-z0-9 | head -c 40
+            echo ""
+        )
         if $(command -v python2.7 > /dev/null 2>&1); then
             pythonversion=python2.7
         elif $(command -v python3 > /dev/null 2>&1); then
@@ -537,9 +549,9 @@ DC
 }
 DWC
 
-if [[ ! $pt_config == 1 ]]; then
-  wget -O /home/${u}/.config/deluge/blocklist.cache https://my.seedit4.me/storage/deluge_blocklist.dat
-  cat > /home/${u}/.config/deluge/blocklist.conf << DBL
+        if [[ ! $pt_config == 1 ]]; then
+            wget -O /home/${u}/.config/deluge/blocklist.cache https://my.seedit4.me/storage/deluge_blocklist.dat
+            cat > /home/${u}/.config/deluge/blocklist.conf << DBL
 {
   "file": 1,
   "format": 1
@@ -555,7 +567,7 @@ if [[ ! $pt_config == 1 ]]; then
   "load_on_start": true
 }
 DBL
-fi
+        fi
 
         dvermajor=$(deluged -v | grep deluged | grep -oP '\d+\.\d+\.\d+' | cut -d. -f1)
 
