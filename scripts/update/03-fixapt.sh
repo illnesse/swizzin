@@ -5,6 +5,10 @@ echo_progress_start "Updating apt repository sources"
 # Ensure correct Nginx PPA
 echo_log_only "Configuring Nginx PPA"
 add-apt-repository -y --remove ppa:ondrej/nginx-mainline
+if [ -f /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list ]; then
+    rm /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list
+fi
+
 add-apt-repository -y ppa:ondrej/nginx
 
 # Ensure correct PHP PPA by re-adding it. This will fetch the current definition for 'focal'.
