@@ -10,6 +10,10 @@ if grep -q "nginx-mainline" /etc/apt/sources.list.d/*; then
     add-apt-repository -y ppa:ondrej/nginx
 fi
 
+if [ -f /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list ]; then
+    rm /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list
+fi
+
 # Update PHP repository paths to use mirrors if needed
 if [ -f /etc/apt/sources.list.d/ondrej-ubuntu-php-bionic.list ]; then
     echo_log_only "Updating PHP repository path to use mirror"

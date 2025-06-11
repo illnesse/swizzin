@@ -198,7 +198,7 @@ _apt_update() {
     echo_log_only "Apt log age = $((now - last_update)), update is forced= $_update_is_forced"
     if [ $((now - last_update)) -gt $_max_apt_age ] || [ "$_update_is_forced" = "true" ]; then
         echo_progress_start "Performing apt update"
-        apt-get update --allow-releaseinfo-change >> $log 2>&1
+        apt-get update -y --allow-releaseinfo-change >> $log 2>&1
         _apt_logcheck
         echo_progress_done
     else
@@ -276,7 +276,7 @@ apt_install() {
     _process_apt_args "$@"
     # Check existing packages
     apt_uninstalled=()
-    for package in ${_apt_packages[@]}; do
+    for package in "${_apt_packages[@]}"; do
         if ! check_installed $package; then
             apt_uninstalled+=($package)
         fi
