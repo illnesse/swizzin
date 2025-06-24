@@ -19,17 +19,18 @@ latestversion=$(github_latest_version sabnzbd/sabnzbd) || {
     echo_error "Failed to query GitHub for latest sabnzbd version"
     exit 1
 }
-latestversion=4.5.0 # needed to pin this due to glib version being too old
 latest="https://github.com/sabnzbd/sabnzbd/archive/refs/tags/${latestversion}.tar.gz"
 
 systempy3_ver=$(get_candidate_version python3)
 
 #Version 3.5 is going to raise the min python version to 3.7 so we have to differentiate whether or not to build a pyenv
 if dpkg --compare-versions ${systempy3_ver} lt 3.7.0 && dpkg --compare-versions ${latestversion} ge 3.5.0; then
-    LIST='par2 p7zip-full libffi-dev libssl-dev libglib2.0-dev libdbus-1-dev'
+    LIST='par2 p7zip-full libffi-dev libssl-dev libdbus-1-dev'
+    #libglib2.0-dev
     PYENV=True
 else
-    LIST='par2 p7zip-full python3-dev python3-setuptools python3-pip python3-venv libffi-dev libssl-dev libglib2.0-dev libdbus-1-dev'
+    LIST='par2 p7zip-full python3-dev python3-setuptools python3-pip python3-venv libffi-dev libssl-dev libdbus-1-dev'
+    #libglib2.0-dev
 fi
 
 apt_install $LIST
