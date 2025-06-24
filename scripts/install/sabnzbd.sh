@@ -19,7 +19,8 @@ latestversion=$(github_latest_version sabnzbd/sabnzbd) || {
     echo_error "Failed to query GitHub for latest sabnzbd version"
     exit 1
 }
-latest="https://github.com/sabnzbd/sabnzbd/archive/refs/tags/${latestversion}.tar.gz"
+# latest="https://github.com/sabnzbd/sabnzbd/archive/refs/tags/${latestversion}.tar.gz" # needed to pin this due to glib version being too old
+latest="https://github.com/sabnzbd/sabnzbd/archive/refs/tags/4.5.1.tar.gz"
 
 systempy3_ver=$(get_candidate_version python3)
 
