@@ -6,7 +6,7 @@
 
 # Get our main user credentials to use when bootstrapping filebrowser.
 username="$(_get_master_username)"
-password="$(_get_user_password "$username")"
+password="F1L3br0w53r$(_get_user_password "$username")"
 
 #shellcheck source=sources/functions/utils
 . /etc/swizzin/sources/functions/utils
