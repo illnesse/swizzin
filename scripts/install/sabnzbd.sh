@@ -19,6 +19,7 @@ latestversion=$(github_latest_version sabnzbd/sabnzbd) || {
     echo_error "Failed to query GitHub for latest sabnzbd version"
     exit 1
 }
+latestversion="4.5.1"
 latest="https://github.com/sabnzbd/sabnzbd/archive/refs/tags/${latestversion}.tar.gz"
 
 systempy3_ver=$(get_candidate_version python3)
@@ -29,7 +30,7 @@ if dpkg --compare-versions ${systempy3_ver} lt 3.7.0 && dpkg --compare-versions 
     #libglib2.0-dev
     PYENV=True
 else
-    LIST='par2 p7zip-full python3-dev python3-setuptools python3-pip python3-venv libffi-dev libssl-dev libdbus-1-dev'
+    LIST='par2 unrar p7zip-full python3-dev python3-setuptools python3-jaraco.functools python3-pip python3-venv libffi-dev libssl-dev libdbus-1-dev'
     #libglib2.0-dev
 fi
 
@@ -65,6 +66,7 @@ fi
 
 /opt/.venv/sabnzbd/bin/pip install --upgrade pip wheel >> "${log}" 2>&1
 /opt/.venv/sabnzbd/bin/pip install -r /opt/sabnzbd/requirements.txt >> "${log}" 2>&1
+/opt/.venv/sabnzbd/bin/pip install sabctools >> "${log}" 2>&1
 echo_progress_done
 
 chown -R ${user}: /opt/.venv/sabnzbd
