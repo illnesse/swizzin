@@ -11,8 +11,6 @@ fi
 
 sonarrv4confdir="/home/$sonarrv4owner/.config/Sonarr"
 
-#Handles existing v2 instances
-
 _install_sonarr() {
     #shellcheck source=sources/functions/mono
     # . /etc/swizzin/sources/functions/mono
@@ -74,7 +72,7 @@ Group=${sonarrv4owner}
 UMask=0002
 
 Type=simple
-ExecStart=/usr/bin/mono --debug /opt/Sonarr/Sonarr.exe -nobrowser -data=${sonarrv4confdir}
+ExecStart=/opt/Sonarr/Sonarr -nobrowser -data=${sonarrv4confdir}
 TimeoutStopSec=20
 KillMode=process
 Restart=on-failure
