@@ -2,7 +2,7 @@
 . /etc/swizzin/sources/functions/utils
 
 user=$(_get_master_username)
-LIST='chromium xvfb par2 p7zip-full python3.11 python3-dev python3-setuptools python3-pip python3-venv'
+LIST='chromium xvfb par2 p7zip-full python3.11 python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin'
 
 cat > /etc/apt/sources.list.d/debian.list << EOF
 deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster.gpg] http://archive.debian.org/debian buster main
