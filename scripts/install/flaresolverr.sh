@@ -2,7 +2,7 @@
 . /etc/swizzin/sources/functions/utils
 
 user=$(_get_master_username)
-LIST='chromium xvfb par2 p7zip-full python3.11 python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin'
+LIST='chromium xvfb par2 p7zip-full build-essential libffi-dev python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin'
 
 cat > /etc/apt/sources.list.d/debian.list << EOF
 deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster.gpg] http://archive.debian.org/debian buster main
@@ -39,11 +39,13 @@ apt_update
 apt_install $LIST
 #apt_install python3.11 python3-pip python3-dev python3-venv
 
-pyenv_install
-pyenv_install_version 3.11.2 # As shipping on Windows/macOS.
-pyenv_create_venv 3.11.2 /opt/.venv/flaresolverr
-chown -R ${user}: /opt/.venv/flaresolverr
-#python3_venv ${user} flaresolverr
+# pyenv_install
+# pyenv_install_version 3.11 # As shipping on Windows/macOS.
+#pyenv_create_venv 3.11 /opt/.venv/flaresolverr
+# python3_venv ${user} flaresolverr
+# chown -R ${user}: /opt/.venv/flaresolverr
+python3.11 -m venv /opt/.venv/flaresolverr
+source /opt/.venv/flaresolverr/bin/activate
 
 echo_progress_start "Downloading and extracting flaresolverr"
 mkdir -p /opt/flaresolverr
@@ -54,8 +56,9 @@ echo_progress_done
 
 echo_progress_start "Installing pip requirements"
 
-/opt/.venv/flaresolverr/bin/pip3.11 install --upgrade pip wheel >> "${log}" 2>&1
-/opt/.venv/flaresolverr/bin/pip3.11 install -r /opt/flaresolverr/FlareSolverr/requirements.txt >> "${log}" 2>&1
+# pip install -r requirements.txt
+# /opt/.venv/flaresolverr/bin/pip install --upgrade pip wheel >> "${log}" 2>&1
+/opt/.venv/flaresolverr/bin/pip install -r /opt/flaresolverr/FlareSolverr/requirements.txt >> "${log}" 2>&1
 
 echo_progress_done
 
@@ -120,7 +123,7 @@ User=root
 Environment="LOG_LEVEL=info"
 Environment="CAPTCHA_SOLVER=none"
 WorkingDirectory=/opt/flaresolverr/FlareSolverr
-ExecStart=/opt/.venv/flaresolverr/bin/python3.11 /opt/flaresolverr/FlareSolverr/src/flaresolverr.py
+ExecStart=/opt/.venv/flaresolverr/bin/python3 /opt/flaresolverr/FlareSolverr/src/flaresolverr.py
 TimeoutStopSec=30
 
 [Install]
