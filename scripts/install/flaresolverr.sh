@@ -5,9 +5,9 @@ user=$(_get_master_username)
 LIST='chromium xvfb par2 p7zip-full python3.11 python3-dev python3-setuptools python3-pip python3-venv'
 
 cat > /etc/apt/sources.list.d/debian.list << EOF
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster.gpg] http://deb.debian.org/debian buster main
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster-updates.gpg] http://deb.debian.org/debian buster-updates main
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-security-buster.gpg] http://deb.debian.org/debian-security buster/updates main
+deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster.gpg] http://archive.debian.org/debian buster main
+deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster-updates.gpg] http://archive.debian.org/debian buster-updates main
+deb [arch=amd64 signed-by=/usr/share/keyrings/debian-security-buster.gpg] http://archive.debian.org/debian-security buster/updates main
 EOF
 
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
@@ -24,13 +24,13 @@ Pin: release a=eoan
 Pin-Priority: 500
 
 Package: *
-Pin: origin "deb.debian.org"
+Pin: origin "archive.debian.org"
 Pin-Priority: 300
 
 # Pattern includes 'chromium', 'chromium-browser' and similarly
 # named dependencies:
 Package: chromium*
-Pin: origin "deb.debian.org"
+Pin: origin "archive.debian.org"
 Pin-Priority: 700
 EOF
 
