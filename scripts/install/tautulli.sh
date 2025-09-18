@@ -16,7 +16,11 @@
 
 user=$(cut -d: -f1 < /root/.master.info)
 
-apt_install python3-dev python3-setuptools python3-pip python3-venv gnutls-bin
+add-apt-repository --yes ppa:deadsnakes/ppa
+apt_update
+
+
+apt_install python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin
 
 cd /opt
 echo_progress_start "Cloning latest Tautulli repo"
