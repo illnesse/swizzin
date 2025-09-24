@@ -45,7 +45,7 @@ function _source_setup() {
         echo "Best of luck and please follow the contribution guidelines cheerio"
     else
         echo -e "...\tCloning swizzin repo to localhost"
-        git clone https://github.com/illnesse/swizzin.git /etc/swizzin >> ${log} 2>&1
+        git clone -b lxd  https://github.com/illnesse/swizzin.git /etc/swizzin >> ${log} 2>&1
         echo -e "\tSwizzin cloned!"
     fi
 
