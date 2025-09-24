@@ -84,7 +84,8 @@ cat > /etc/sudoers.d/tools << SUD
 # Cmnd alias specification
 Cmnd_Alias   S4CLEANMEM = /usr/local/bin/swizzin/tools/clean_mem
 Cmnd_Alias   S4CLAIMPLEX = /srv/tools/plexclaim.sh
-Cmnd_Alias   S4GENERALCMNDS = /usr/sbin/repquota, /bin/systemctl, /bin/ip
+Cmnd_Alias   S4GENERALCMNDS = /usr/sbin/repquota, /bin/systemctl, /usr/bin/systemctl, /bin/ip, /usr/sbin/ip
+
 
 www-data     ALL = (ALL) NOPASSWD: S4CLEANMEM, S4GENERALCMNDS, S4CLAIMPLEX
 
