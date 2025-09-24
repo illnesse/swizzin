@@ -37,18 +37,18 @@ Port				21
 ### ECM CUSTOM ###
 
 UseIPv6				on
-IdentLookups			off
+# IdentLookups			off
 ServerName			"Debian"
 ServerType			standalone
 DeferWelcome			off
-MultilineRFC2228		on
+# MultilineRFC2228		on
 DefaultServer			on
 ShowSymlinks			on
 TimeoutNoTransfer		600
 TimeoutStalled			600
 TimeoutIdle			1200
-TLSRenegotiate none
-TLSOptions NoSessionReuseRequired
+# TLSRenegotiate none
+# TLSOptions NoSessionReuseRequired
 DisplayLogin                    welcome.msg
 DisplayChdir               	.message true
 ListOptions                	"-l"
