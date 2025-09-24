@@ -16,7 +16,11 @@
 
 user=$(cut -d: -f1 < /root/.master.info)
 
-apt_install python3
+add-apt-repository --yes ppa:deadsnakes/ppa
+apt_update
+
+
+apt_install python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin
 
 cd /opt
 echo_progress_start "Cloning latest Tautulli repo"
@@ -37,7 +41,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/python3 /opt/tautulli/Tautulli.py --quiet --daemon --nolaunch --config /opt/tautulli/config.ini --datadir /opt/tautulli
+ExecStart=/usr/bin/python3.11 /opt/tautulli/Tautulli.py --quiet --daemon --nolaunch --config /opt/tautulli/config.ini --datadir /opt/tautulli
 GuessMainPID=no
 Type=forking
 User=tautulli
