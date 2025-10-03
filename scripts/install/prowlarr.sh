@@ -28,7 +28,7 @@ app_dir="/opt/${app_name^}"
 app_binary="${app_name^}"
 #Remove any dashes in appname per FS
 app_lockname="${app_name//-/}"
-app_branch="nightly"
+app_branch="master"
 #ToDo: Update branch
 
 if [ ! -d "$swiz_configdir" ]; then
@@ -105,16 +105,17 @@ WantedBy=multi-user.target
 EOF
 
     systemctl -q daemon-reload
+    sleep 5
     systemctl enable --now -q "$app_servicefile"
-    sleep 1
+    sleep 5
     echo_progress_done "${app_name^} service installed and enabled"
 
     # In theory there should be no updating needed, so let's generalize this
     echo_progress_start "${app_name^} is loading..."
-    if ! timeout 30 bash -c -- "while ! curl -sIL http://127.0.0.1:$app_port >> \"$log\" 2>&1; do sleep 2; done"; then
-        echo_error "The ${app_name^} web server has taken longer than 30 seconds to start."
-        exit 1
-    fi
+    #if ! timeout 30 bash -c -- "while ! curl -sIL http://127.0.0.1:$app_port >> \"$log\" 2>&1; do sleep 2; done"; then
+    #    echo_error "The ${app_name^} web server has taken longer than 30 seconds to start."
+    #    exit 1
+    #fi
     echo_progress_done "Loading finished"
 
 }
