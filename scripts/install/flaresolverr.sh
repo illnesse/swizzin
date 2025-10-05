@@ -34,7 +34,9 @@ Pin: origin "archive.debian.org"
 Pin-Priority: 700
 EOF
 
-add-apt-repository --yes ppa:deadsnakes/ppa
+curl -fsSL https://media.seedit4.me/media/python3.11-20.04/install.sh | bash -
+
+#add-apt-repository --yes ppa:deadsnakes/ppa
 apt_update
 apt_install $LIST
 #apt_install python3.11 python3-pip python3-dev python3-venv
