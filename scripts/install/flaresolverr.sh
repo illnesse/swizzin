@@ -34,7 +34,7 @@ Pin: origin "archive.debian.org"
 Pin-Priority: 700
 EOF
 
-curl -fsSL https://media.seedit4.me/media/python3.11-20.04/install.sh | bash -
+curl -fsSL https://media.seedit4.me/media/python3.11-20.04/install.sh | bash -  >> "${log}" 2>&1
 
 #add-apt-repository --yes ppa:deadsnakes/ppa
 apt_update
