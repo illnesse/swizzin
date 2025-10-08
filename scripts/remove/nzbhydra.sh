@@ -4,9 +4,9 @@ user=$(_get_master_username)
 systemctl disable --now nzbhydra
 
 #Old nzbhydra1 installs
-rm_if_exists /opt/nzbhydra
-rm_if_exists /home/${user}/.config/nzbhydra
-rm_if_exists /opt/.venv/nzbhydra
+rm_if_exists /opt/nzbhydra2
+rm_if_exists /home/${user}/.config/nzbhydra2
+rm_if_exists /opt/.venv/nzbhydra2
 if [ -z "$(ls -A /opt/.venv)" ]; then
     rm -rf /opt/.venv
 fi
