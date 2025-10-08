@@ -28,7 +28,7 @@ _install() {
     add-apt-repository -y ppa:savoury1/fonts
     apt_update
     apt install -y libfreetype6
-    apt_install xdg-utils wget xz-utils libxcb-xinerama0 libfontconfig libegl1 libgl1-mesa-glx libopengl0 libxcb-cursor0
+    apt_install xdg-utils wget xz-utils libxcb-xinerama0 libfontconfig libegl1 libopengl0 libxcb-cursor0
     echo_progress_start "Installing calibre"
     if [[ $(_os_arch) = "amd64" ]]; then
         wget https://download.calibre-ebook.com/linux-installer.sh -O /tmp/calibre-installer.sh >> $log 2>&1
