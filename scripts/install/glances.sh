@@ -5,6 +5,8 @@ echo_progress_done "installing dependencies"
 
 apt_install glances
 
+sudo sh -c 'wget -O - https://github.com/nicolargo/glances/archive/refs/tags/v$(glances -V|cut -zd" " -f2|tr -d v).tar.gz | tar -xz -C /usr/lib/python3/dist-packages/glances/outputs/static/ --strip-components=4 --wildcards glances-*/glances/outputs/static/public/'
+
 echo_progress_start "Installing reverse proxy config..."
 
 cat > /etc/nginx/apps/glances.conf << GLN
