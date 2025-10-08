@@ -140,9 +140,19 @@ function _update() {
     apt_upgrade >> "${log}" 2>&1
 
     cd /etc/swizzin
-    git checkout lxd > /dev/null 2>&1
-    git fetch origin lxd > /dev/null 2>&1
-    git reset --hard origin/lxd >> "${log}" 2>&1
+    
+    # Determine branch based on Ubuntu version
+    ubuntu_version=$(lsb_release -rs 2>/dev/null || echo "0")
+    if [[ $ubuntu_version =~ ^24\. ]]; then
+        branch="ubuntu-24.04"
+        echo_info "Ubuntu 24.x detected, switching to branch: $branch"
+    else
+        branch="lxd"
+    fi
+    
+    git checkout "$branch" > /dev/null 2>&1
+    git fetch origin "$branch" > /dev/null 2>&1
+    git reset --hard origin/"$branch" >> "${log}" 2>&1
     echo_info "HEAD is now set to $(git log --pretty=format:'%h' -n1)"
     echo_progress_done "Local repository updated"
 
