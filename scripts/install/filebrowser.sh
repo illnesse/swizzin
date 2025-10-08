@@ -18,6 +18,8 @@ _install() {
     mkdir -p "/home/${username}/bin"
     mkdir -p "/home/${username}/.config/Filebrowser"
     #
+
+    apt_install jq
     # Download and extract the files to the desired location.
     echo_progress_start "Downloading and extracting source code"
 
