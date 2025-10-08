@@ -25,7 +25,7 @@ password=$(cut -d: -f2 < /root/.master.info)
 if [[ $codename =~ ("stretch"|"buster"|"bionic") ]]; then
     LIST='tesseract-ocr gocr rhino python2.7-dev python-pip python-virtualenv virtualenv libcurl4-openssl-dev sqlite3'
 else
-    LIST='tesseract-ocr gocr rhino libcurl4-openssl-dev python2.7-dev sqlite3'
+    LIST='tesseract-ocr gocr rhino libcurl4-openssl-dev python3 sqlite3'
 fi
 
 if [[ $(_os_arch) =~ "arm" ]]; then
@@ -38,145 +38,147 @@ if [[ ! $codename =~ ("stretch"|"buster"|"bionic") ]]; then
     python_getpip
 fi
 
-python2_venv ${user} pyload
+mkdir -p /opt/.venv/pyload
+python3_venv ${user} pyload
 
 echo_progress_start "Installing python dependencies"
-PIP='wheel setuptools<45 pycurl pycrypto tesseract pillow pyOpenSSL js2py feedparser beautifulsoup'
-/opt/.venv/pyload/bin/pip install $PIP >> "${log}" 2>&1
+PIP='pyload-ng[all]'
+#PIP='wheel setuptools<45 pycurl pycrypto tesseract pillow pyOpenSSL js2py feedparser beautifulsoup'
+/opt/.venv/pyload/bin/pip install --pre $PIP >> "${log}" 2>&1
 chown -R ${user}: /opt/.venv/pyload
 echo_progress_done
 
-echo_progress_start "Cloning pyLoad"
-git clone --branch "stable" https://github.com/pyload/pyload.git /opt/pyload >> "${log}" 2>&1
-echo_progress_done
+#echo_progress_start "Cloning pyLoad"
+#git clone --branch "stable" https://github.com/pyload/pyload.git /opt/pyload >> "${log}" 2>&1
+#echo_progress_done
 
-echo_progress_start "Configuring pyLoad"
-echo "/opt/pyload" > /opt/pyload/module/config/configdir
+# echo_progress_start "Configuring pyLoad"
+# echo "/opt/pyload" > /opt/pyload/module/config/configdir
 
-cat > /opt/pyload/pyload.conf << PYCONF
-version: 1 
+# cat > /opt/pyload/pyload.conf << PYCONF
+# version: 1 
 
-download - "Download":
-        int chunks : "Max connections for one download" = 3
-        str interface : "Download interface to bind (ip or Name)" = None
-        bool ipv6 : "Allow IPv6" = False
-        bool limit_speed : "Limit Download Speed" = False
-        int max_downloads : "Max Parallel Downloads" = 3
-        int max_speed : "Max Download Speed in kb/s" = -1
-        bool skip_existing : "Skip already existing files" = False
+# download - "Download":
+#         int chunks : "Max connections for one download" = 3
+#         str interface : "Download interface to bind (ip or Name)" = None
+#         bool ipv6 : "Allow IPv6" = False
+#         bool limit_speed : "Limit Download Speed" = False
+#         int max_downloads : "Max Parallel Downloads" = 3
+#         int max_speed : "Max Download Speed in kb/s" = -1
+#         bool skip_existing : "Skip already existing files" = False
 
-downloadTime - "Download Time":
-        time end : "End" = 0:00
-        time start : "Start" = 0:00
+# downloadTime - "Download Time":
+#         time end : "End" = 0:00
+#         time start : "Start" = 0:00
 
-general - "General":
-        bool checksum : "Use Checksum" = False
-        bool debug_mode : "Debug Mode" = False
-        folder download_folder : "Download Folder" = /home/${user}/Downloads
-        bool folder_per_package : "Create folder for each package" = True
-        en;de;fr;it;es;nl;sv;ru;pl;cs;sr;pt_BR language : "Language" = en
-        int min_free_space : "Min Free Space (MB)" = 200
-        int renice : "CPU Priority" = 0
+# general - "General":
+#         bool checksum : "Use Checksum" = False
+#         bool debug_mode : "Debug Mode" = False
+#         folder download_folder : "Download Folder" = /home/${user}/Downloads
+#         bool folder_per_package : "Create folder for each package" = True
+#         en;de;fr;it;es;nl;sv;ru;pl;cs;sr;pt_BR language : "Language" = en
+#         int min_free_space : "Min Free Space (MB)" = 200
+#         int renice : "CPU Priority" = 0
 
-log - "Log":
-        bool file_log : "File Log" = True
-        int log_count : "Count" = 5
-        folder log_folder : "Folder" = Logs
-        bool log_rotate : "Log Rotate" = True
-        int log_size : "Size in kb" = 100
+# log - "Log":
+#         bool file_log : "File Log" = True
+#         int log_count : "Count" = 5
+#         folder log_folder : "Folder" = Logs
+#         bool log_rotate : "Log Rotate" = True
+#         int log_size : "Size in kb" = 100
 
-permission - "Permissions":
-        bool change_dl : "Change Group and User of Downloads" = False
-        bool change_file : "Change file mode of downloads" = False
-        bool change_group : "Change group of running process" = False
-        bool change_user : "Change user of running process" = False
-        str file : "Filemode for Downloads" = 0644
-        str folder : "Folder Permission mode" = 0755
-        str group : "Groupname" = users
-        str user : "Username" = user
+# permission - "Permissions":
+#         bool change_dl : "Change Group and User of Downloads" = False
+#         bool change_file : "Change file mode of downloads" = False
+#         bool change_group : "Change group of running process" = False
+#         bool change_user : "Change user of running process" = False
+#         str file : "Filemode for Downloads" = 0644
+#         str folder : "Folder Permission mode" = 0755
+#         str group : "Groupname" = users
+#         str user : "Username" = user
 
-proxy - "Proxy":
-        str address : "Address" = "localhost"
-        password password : "Password" = None
-        int port : "Port" = 7070
-        bool proxy : "Use Proxy" = False
-        http;socks4;socks5 type : "Protocol" = http
-        str username : "Username" = None
+# proxy - "Proxy":
+#         str address : "Address" = "localhost"
+#         password password : "Password" = None
+#         int port : "Port" = 7070
+#         bool proxy : "Use Proxy" = False
+#         http;socks4;socks5 type : "Protocol" = http
+#         str username : "Username" = None
 
-reconnect - "Reconnect":
-        bool activated : "Use Reconnect" = False
-        time endTime : "End" = 0:00
-        str method : "Method" = None
-        time startTime : "Start" = 0:00
+# reconnect - "Reconnect":
+#         bool activated : "Use Reconnect" = False
+#         time endTime : "End" = 0:00
+#         str method : "Method" = None
+#         time startTime : "Start" = 0:00
 
-remote - "Remote":
-        bool activated : "Activated" = False
-        ip listenaddr : "Adress" = 0.0.0.0
-        bool nolocalauth : "No authentication on local connections" = True
-        int port : "Port" = 7227
+# remote - "Remote":
+#         bool activated : "Activated" = False
+#         ip listenaddr : "Adress" = 0.0.0.0
+#         bool nolocalauth : "No authentication on local connections" = True
+#         int port : "Port" = 7227
 
-ssl - "SSL":
-        bool activated : "Activated" = False
-        file cert : "SSL Certificate" = ssl.crt
-        file key : "SSL Key" = ssl.key
+# ssl - "SSL":
+#         bool activated : "Activated" = False
+#         file cert : "SSL Certificate" = ssl.crt
+#         file key : "SSL Key" = ssl.key
 
-webinterface - "Webinterface":
-        bool activated : "Activated" = True
-        bool basicauth : "Use basic auth" = False
-        ip host : "IP" = 0.0.0.0
-        bool https : "Use HTTPS" = False
-        int port : "Port" = 8712
-        str prefix : "Path Prefix" = 
-        builtin;threaded;fastcgi;lightweight server : "Server" = builtin
-        modern;pyplex;classic template : "Template" = modern
-PYCONF
+# webinterface - "Webinterface":
+#         bool activated : "Activated" = True
+#         bool basicauth : "Use basic auth" = False
+#         ip host : "IP" = 0.0.0.0
+#         bool https : "Use HTTPS" = False
+#         int port : "Port" = 8712
+#         str prefix : "Path Prefix" = 
+#         builtin;threaded;fastcgi;lightweight server : "Server" = builtin
+#         modern;pyplex;classic template : "Template" = modern
+# PYCONF
 
-echo_progress_done
+# echo_progress_done
 
-echo_progress_start "Initalizing database"
-read < <(
-    /opt/.venv/pyload/bin/python2 /opt/pyload/pyLoadCore.py > /dev/null 2>&1 &
-    echo $!
-)
-PID=$REPLY
-sleep 10
-#kill -9 $PID
-while kill -0 $PID > /dev/null 2>&1; do
-    sleep 1
-    kill $PID > /dev/null 2>&1
-done
-sleep 3
-cd /opt/pyload/
+# echo_progress_start "Initalizing database"
+# read < <(
+#     /opt/.venv/pyload/bin/python2 /opt/pyload/pyLoadCore.py > /dev/null 2>&1 &
+#     echo $!
+# )
+# PID=$REPLY
+# sleep 10
+# #kill -9 $PID
+# while kill -0 $PID > /dev/null 2>&1; do
+#     sleep 1
+#     kill $PID > /dev/null 2>&1
+# done
+# sleep 3
+# cd /opt/pyload/
 
-cat > /opt/pyload/adduser.py << PYAU
-from hashlib import sha1
-import random
+# cat > /opt/pyload/adduser.py << PYAU
+# from hashlib import sha1
+# import random
 
-strpass = "${password}"
+# strpass = "${password}"
 
-salt = reduce(lambda x, y: x + y, [str(random.randint(0, 9)) for i in range(0, 5)])
-h = sha1(salt + strpass)
-password = salt + h.hexdigest()
+# salt = reduce(lambda x, y: x + y, [str(random.randint(0, 9)) for i in range(0, 5)])
+# h = sha1(salt + strpass)
+# password = salt + h.hexdigest()
 
-print(password)
-PYAU
+# print(password)
+# PYAU
 
-sleep 3
+# sleep 3
 
-saltedpasswd=$(/opt/.venv/pyload/bin/python2 /opt/pyload/adduser.py)
+# saltedpasswd=$(/opt/.venv/pyload/bin/python2 /opt/pyload/adduser.py)
 
-sleep 1
+# sleep 1
 
-if [ -f "/opt/pyload/files.db" ]; then
-    sqlite3 /opt/pyload/files.db "\
-    INSERT INTO users('name', 'password') \
-      VALUES('${user}','${saltedpasswd}');\
-      "
-    echo_progress_done
-else
-    echo_error "Something went wrong with user setup -- you will be unable to login"
-    #TODO maybe exit then?
-fi
+# if [ -f "/opt/pyload/files.db" ]; then
+#     sqlite3 /opt/pyload/files.db "\
+#     INSERT INTO users('name', 'password') \
+#       VALUES('${user}','${saltedpasswd}');\
+#       "
+#     echo_progress_done
+# else
+#     echo_error "Something went wrong with user setup -- you will be unable to login"
+#     #TODO maybe exit then?
+# fi
 
 chown -R ${user}: /opt/pyload
 mkdir -p /home/${user}/Downloads
