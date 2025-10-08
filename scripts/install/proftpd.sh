@@ -133,6 +133,9 @@ sudo chown root:root /etc/proftpd/tls.conf
 sudo chmod 644 /etc/proftpd/tls.conf
 sudo chmod 755 /etc/proftpd /etc/proftpd/ssl
 
+echo "LoadModule mod_tls.c" >> /etc/proftpd/modules.conf
+
+
 echo_progress_done "done"
 
 echo_progress_start "Setting up SSL"
