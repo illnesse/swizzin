@@ -23,6 +23,8 @@ username=$(_get_master_username)
 LIST='default-jre-headless unzip'
 apt_install $LIST
 
+make-ssl-cert generate-default-snakeoil
+
 echo_progress_start "Installing NZBHydra ${latestversion}"
 latest=$(curl -s https://api.github.com/repos/theotherp/nzbhydra2/releases/latest | grep -E "browser_download_url" | grep linux | head -1 | cut -d\" -f 4)
 latestversion=$(echo $latest | grep -oP 'v\d+\.\d+\.\d+')
