@@ -33,6 +33,7 @@ airsonic_systemd() {
     wget https://raw.githubusercontent.com/airsonic/airsonic/master/contrib/airsonic.service -O /etc/systemd/system/airsonic.service >> "$log" 2>&1
     sed -i "s|/var/airsonic|$airsonicdir|g" /etc/systemd/system/airsonic.service
     sed -i 's|PORT=8080|PORT=8185|g' /etc/systemd/system/airsonic.service
+    sed -i 's|^PrivateUsers=.*|PrivateUsers=no|' /etc/systemd/system/airsonic.service
 
     defconfdir="/etc/sysconfig"
     if [[ $distribution == "Debian" ]]; then
