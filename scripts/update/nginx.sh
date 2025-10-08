@@ -24,7 +24,7 @@ function update_nginx() {
     #not sure why this is preinstalled on the template, unused and caused upgrade issues so lets remove it
     apt_remove libnginx-mod-http-geoip
 
-    LIST="php8.0-fpm php8.0-cli php8.0-dev php8.0-xml php8.0-curl php8.0-mcrypt php8.0-mbstring php8.0-xml"
+    LIST="php8.2-fpm php8.2-cli php8.2-dev php8.2-xml php8.2-curl php8.2-mcrypt php8.2-mbstring php8.2-xml"
     #php-geoip php-json
 
     missing=()
@@ -47,11 +47,11 @@ function update_nginx() {
         fi
     fi
 
-    # Purge all PHP versions except 8.0 and 7.3
+    # Purge all PHP versions except 8.2 and 7.3
     for phpdir in /etc/php/*; do
         if [[ -d "$phpdir" ]]; then
             phpver=$(basename "$phpdir")
-            if [[ "$phpver" != "8.0" && "$phpver" != "7.3" ]]; then
+            if [[ "$phpver" != "8.2" && "$phpver" != "7.3" ]]; then
                 echo "Purging PHP version $phpver"
                 apt_remove --purge php${phpver}*
             fi
@@ -62,9 +62,9 @@ function update_nginx() {
     phpversion=$(php_service_version)
     sock="php${phpversion}-fpm"
 
-    if [[ $phpversion != "8.0" ]]; then
+    if [[ $phpversion != "8.2" ]]; then
         echo "wrong php version: $phpversion cleaning up"
-        sudo update-alternatives --set php /usr/bin/php8.0
+        sudo update-alternatives --set php /usr/bin/php8.2
     fi
 
     #    _apt_reset

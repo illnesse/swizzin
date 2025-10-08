@@ -36,7 +36,7 @@ else
         echo_progress_done "Database installed"
     fi
     #Depends
-    apt_install unzip php8.0-mysql libxml2-dev php8.0-common php8.0-gd php8.0-curl php8.0-zip php8.0-xml php8.0-mbstring php8.0-fpm php8.0-cli
+    apt_install unzip php8.2-mysql libxml2-dev php8.2-common php8.2-gd php8.2-curl php8.2-zip php8.2-xml php8.2-mbstring php8.2-fpm php8.2-cli
     #a2enmod rewrite > /dev/null 2>&1
     cd /tmp
 
@@ -99,7 +99,7 @@ else
     echo_progress_done "Permissions set"
 
     echo_progress_start "Configuring nginx and php"
-    sock="php8.0-fpm"
+    sock="php8.2-fpm"
 
     cat > /etc/nginx/apps/nextcloud.conf << EOF
 # The following 2 rules are only needed for the user_webfinger app.
