@@ -40,7 +40,7 @@ _systemd() {
 		DevicePolicy=closed
 		NoNewPrivileges=yes
 		PrivateTmp=yes
-		PrivateUsers=yes
+		PrivateUsers=no
 		ProtectControlGroups=yes
 		ProtectKernelModules=yes
 		ProtectKernelTunables=yes
