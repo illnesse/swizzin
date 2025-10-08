@@ -67,7 +67,7 @@ WorkingDirectory=/opt/nzbhydra2
 # NZBHydra stores its data in a "data" subfolder of its installation path
 # To change that set the --datafolder parameter:
 # --datafolder /path-to/datafolder
-ExecStart=/opt/nzbhydra2/nzbhydra2 --nobrowser --datafolder /home/${username}/.config/nzbhydra2 --nopidfile
+ExecStart=/opt/nzbhydra2/core --nobrowser --datafolder /home/${username}/.config/nzbhydra2 --nopidfile
 
 Restart=always
 
