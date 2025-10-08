@@ -20,7 +20,8 @@ echo_progress_done "k"
 echo_progress_start "installing packages"
 apt_install debconf-utils >> "${log}" 2>&1
 echo "proftpd-basic shared/proftpd/inetd_or_standalone select standalone" | debconf-set-selections >> "${log}" 2>&1
-apt_install proftpd-basic >> "${log}" 2>&1
+apt_install proftpd-basic proftpd-mod-crypto >> "${log}" 2>&1
+mkdir -p /etc/proftpd/
 echo_progress_done "done"
 
 echo_progress_start "configuring"
@@ -37,18 +38,18 @@ Port				21
 ### ECM CUSTOM ###
 
 UseIPv6				on
-IdentLookups			off
+# IdentLookups			off
 ServerName			"Debian"
 ServerType			standalone
 DeferWelcome			off
-MultilineRFC2228		on
+# MultilineRFC2228		on
 DefaultServer			on
 ShowSymlinks			on
 TimeoutNoTransfer		600
 TimeoutStalled			600
 TimeoutIdle			1200
-TLSRenegotiate none
-TLSOptions NoSessionReuseRequired
+# TLSRenegotiate none
+# TLSOptions NoSessionReuseRequired
 DisplayLogin                    welcome.msg
 DisplayChdir               	.message true
 ListOptions                	"-l"
@@ -111,19 +112,27 @@ organizationalunit=IT
 email=support@seedit4.me
 openssl req -new -x509 -days 365 -nodes -out /etc/proftpd/ssl/proftpd.cert.pem -keyout /etc/proftpd/ssl/proftpd.key.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
 chmod 600 /etc/proftpd/ssl/proftpd.*
+
 echo 'Include /etc/proftpd/tls.conf' >> /etc/proftpd/proftpd.conf
-echo '<IfModule mod_tls.c>' > /etc/proftpd/tls.conf
-echo 'TLSEngine on' >> /etc/proftpd/tls.conf
-echo 'TLSLog /var/log/proftpd/tls.log' >> /etc/proftpd/tls.conf
-echo 'TLSProtocol TLSv1.2' >> /etc/proftpd/tls.conf
-echo 'TLSCipherSuite AES128+EECDH:AES128+EDH' >> /etc/proftpd/tls.conf
-echo 'TLSOptions NoCertRequest AllowClientRenegotiations' >> /etc/proftpd/tls.conf
-echo 'TLSRSACertificateFile /etc/proftpd/ssl/proftpd.cert.pem' >> /etc/proftpd/tls.conf
-echo 'TLSRSACertificateKeyFile /etc/proftpd/ssl/proftpd.key.pem' >> /etc/proftpd/tls.conf
-echo 'TLSVerifyClient off' >> /etc/proftpd/tls.conf
-echo 'TLSRequired off' >> /etc/proftpd/tls.conf
-echo 'RequireValidShell no' >> /etc/proftpd/tls.conf
-echo '</IfModule>' >> /etc/proftpd/tls.conf
+cat > /etc/proftpd/tls.conf << TLS
+<IfModule mod_tls.c>
+TLSEngine on
+TLSLog /var/log/proftpd/tls.log
+TLSProtocol TLSv1.2 TLSv1.3
+TLSCipherSuite AES128+EECDH:AES128+EDH
+TLSOptions AllowClientRenegotiations
+TLSRSACertificateFile /etc/proftpd/ssl/proftpd.cert.pem
+TLSRSACertificateKeyFile /etc/proftpd/ssl/proftpd.key.pem
+TLSVerifyClient off
+TLSRequired off
+RequireValidShell no
+</IfModule>
+TLS
+
+sudo chown root:root /etc/proftpd/tls.conf
+sudo chmod 644 /etc/proftpd/tls.conf
+sudo chmod 755 /etc/proftpd /etc/proftpd/ssl
+
 echo_progress_done "done"
 
 echo_progress_start "Setting up SSL"
