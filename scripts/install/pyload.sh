@@ -34,9 +34,9 @@ fi
 
 apt_install $LIST
 
-if [[ ! $codename =~ ("stretch"|"buster"|"bionic") ]]; then
-    python_getpip
-fi
+# if [[ ! $codename =~ ("stretch"|"buster"|"bionic") ]]; then
+#     python_getpip
+# fi
 
 mkdir -p /opt/.venv/pyload
 python3_venv ${user} pyload
@@ -180,11 +180,12 @@ echo_progress_done
 #     #TODO maybe exit then?
 # fi
 
-chown -R ${user}: /opt/pyload
-mkdir -p /home/${user}/Downloads
-chown ${user}: /home/${user}/Downloads
+/opt/.venv/pyload/bin/pyload --dry-run
+sed -i 's/int port : "Port" = 8000/int port : "Port" = 8712/' /home/${user}/.pyload/settings/pyload.cfg
+sed -i 's|str prefix : "Path prefix" .*|str prefix : "Path prefix" = /pyload|' /home/${user}/.pyload/settings/pyload.cfg
 
-echo_progress_start "Insatlling systemd service"
+
+echo_progress_start "Installing systemd service"
 cat > /etc/systemd/system/pyload.service << PYSD
 [Unit]
 Description=pyLoad
@@ -192,7 +193,7 @@ After=network.target
 
 [Service]
 User=${user}
-ExecStart=/opt/.venv/pyload/bin/python2 /opt/pyload/pyLoadCore.py --config=/opt/pyload
+ExecStart=/opt/.venv/pyload/bin/pyload
 WorkingDirectory=/opt/pyload
 
 [Install]
