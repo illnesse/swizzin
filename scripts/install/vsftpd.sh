@@ -25,6 +25,7 @@ echo_progress_start "installing packages"
 apt_install vsftpd ssl-cert
 echo_progress_done "done"
 
+make-ssl-cert generate-default-snakeoil
 
 echo_progress_start "Configuring vsftpd"
 cat > /etc/vsftpd.conf << VSC
