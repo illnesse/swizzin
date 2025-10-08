@@ -45,6 +45,7 @@ echo_progress_start "Cloning medusa source code"
 cd /opt/
 git clone https://github.com/pymedusa/Medusa.git medusa >> ${log} 2>&1
 chown -R ${user}:${user} medusa
+ /opt/.venv/medusa/bin/pip3 install -r /opt/medusa/requirements.txt 
 echo_progress_done
 
 echo_progress_start "Installing systemd service"
