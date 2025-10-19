@@ -13,8 +13,6 @@
 distribution=$(_os_distro)
 codename=$(_os_codename)
 
-make-ssl-cert generate-default-snakeoil
-
 if [[ -n $(pidof apache2) ]]; then
     if [[ -z $apache2 ]]; then
         if (whiptail --title "apache2 conflict" --yesno --yes-button "Purge it!" --no-button "Disable it" "WARNING: The installer has detected that apache2 is already installed. To continue, the installer must either purge apache2 or disable it." 8 78); then

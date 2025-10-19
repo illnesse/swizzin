@@ -133,6 +133,9 @@ function _clr() {
 function _update() {
     echo_progress_start "Updating swizzin local repository"
 
+    #create snakeoil if missing
+    make-ssl-cert generate-default-snakeoil
+
     # First run the fixapt script to handle repository changes
     bash /etc/swizzin/scripts/update/03-fixapt.sh
 
@@ -140,7 +143,7 @@ function _update() {
     apt_upgrade >> "${log}" 2>&1
 
     cd /etc/swizzin
-    
+
     # Determine branch based on Ubuntu version
     ubuntu_version=$(lsb_release -rs 2>/dev/null || echo "0")
     if [[ $ubuntu_version =~ ^24\. ]]; then
@@ -149,7 +152,7 @@ function _update() {
     else
         branch="lxd"
     fi
-    
+
     git checkout "$branch" > /dev/null 2>&1
     git fetch origin "$branch" > /dev/null 2>&1
     git reset --hard origin/"$branch" >> "${log}" 2>&1
