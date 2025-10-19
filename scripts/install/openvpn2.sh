@@ -841,7 +841,7 @@ function newClient() {
     echo "The configuration file has been written to $homeDir/$CLIENT.ovpn."
     echo "Download the .ovpn file and import it in your OpenVPN client."
 
-    exit 0
+    # exit 0
 }
 
 function revokeClient() {
