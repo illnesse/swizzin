@@ -1017,15 +1017,14 @@ function manageMenu() {
 }
 
 # Check for root, TUN, OS...
-initialCheck
 
 # Check if OpenVPN is already installed
-if [[ -e /etc/openvpn/server.conf && $AUTO_INSTALL != "y" ]]; then
-    manageMenu
+if [[ -e /install/.openvpn2.lock ]]; then
+    echo_success "OpenVPN2 already installed"
 else
+    initialCheck
     installOpenVPN
+    touch /install/.openvpn2.lock
+    echo_success "OpenVPN2 installed"
+    echo_info "Client configuration files have been created in /home/seedit4me/"
 fi
-
-touch /install/.openvpn2.lock
-echo_success "OpenVPN2 installed"
-echo_info "Client configuration files have been created in /home/seedit4me/"
