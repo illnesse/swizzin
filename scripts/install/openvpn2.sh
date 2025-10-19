@@ -130,22 +130,22 @@ prefetch: yes' >> /etc/unbound/unbound.conf
             mv /etc/unbound/unbound.conf /etc/unbound/unbound.conf.old
 
             echo 'server:
-	use-syslog: yes
-	do-daemonize: no
-	username: "unbound"
-	directory: "/etc/unbound"
-	trust-anchor-file: trusted-key.key
-	root-hints: root.hints
-	interface: 10.8.0.1
-	access-control: 10.8.0.1/24 allow
-	port: 53
-	num-threads: 2
-	use-caps-for-id: yes
-	harden-glue: yes
-	hide-identity: yes
-	hide-version: yes
-	qname-minimisation: yes
-	prefetch: yes' > /etc/unbound/unbound.conf
+    use-syslog: yes
+    do-daemonize: no
+    username: "unbound"
+    directory: "/etc/unbound"
+    trust-anchor-file: trusted-key.key
+    root-hints: root.hints
+    interface: 10.8.0.1
+    access-control: 10.8.0.1/24 allow
+    port: 53
+    num-threads: 2
+    use-caps-for-id: yes
+    harden-glue: yes
+    hide-identity: yes
+    hide-version: yes
+    qname-minimisation: yes
+    prefetch: yes' > /etc/unbound/unbound.conf
         fi
 
         if [[ ! "$OS" =~ (fedora|centos) ]]; then
