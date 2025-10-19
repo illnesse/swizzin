@@ -110,6 +110,7 @@ function initialCheck() {
 function installUnbound() {
     # If Unbound isn't installed, install it
     if [[ ! -e /etc/unbound/unbound.conf ]]; then
+        echo_progress_start "Installing Unbound DNS resolver"
 
         if [[ $OS =~ (debian|ubuntu) ]]; then
             apt-get install -y unbound
@@ -215,8 +216,10 @@ access-control: fd42:42:42:42::/112 allow' >>/etc/unbound/openvpn.conf
         fi
     fi
 
+    echo_progress_start "Enabling and starting Unbound service"
     systemctl enable unbound
     systemctl restart unbound
+    echo_progress_done "Unbound configured"
 }
 
 function resolvePublicIP() {
@@ -701,6 +704,7 @@ function installOpenVPN() {
     # idempotent on multiple runs, but will only install OpenVPN from upstream
     # the first time.
     if [[ ! -e /etc/openvpn/server.conf ]]; then
+        echo_progress_start "Installing OpenVPN and dependencies"
         if [[ $OS =~ (debian|ubuntu) ]]; then
             apt-get update
             apt-get -y install ca-certificates gnupg
@@ -730,6 +734,7 @@ function installOpenVPN() {
             # Install required dependencies and upgrade the system
             pacman --needed --noconfirm -Syu openvpn iptables openssl wget ca-certificates curl
         fi
+        echo_progress_done "OpenVPN packages installed"
         # An old version of easy-rsa was available by default in some openvpn packages
         if [[ -d /etc/openvpn/easy-rsa/ ]]; then
             rm -rf /etc/openvpn/easy-rsa/
@@ -745,6 +750,7 @@ function installOpenVPN() {
 
     # Install the latest version of easy-rsa from source, if not already installed.
     if [[ ! -d /etc/openvpn/easy-rsa/ ]]; then
+        echo_progress_start "Installing easy-rsa"
         local version="3.1.2"
         wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v${version}/EasyRSA-${version}.tgz
         mkdir -p /etc/openvpn/easy-rsa
@@ -768,6 +774,7 @@ function installOpenVPN() {
         SERVER_NAME="server_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
         echo "$SERVER_NAME" >SERVER_NAME_GENERATED
 
+        echo_progress_start "Generating PKI and certificates"
         # Create the PKI, set up the CA, the DH params and the server certificate
         ./easyrsa init-pki
         EASYRSA_CA_EXPIRE=3650 ./easyrsa --batch --req-cn="$SERVER_CN" build-ca nopass
@@ -790,6 +797,7 @@ function installOpenVPN() {
             openvpn --genkey --secret /etc/openvpn/tls-auth.key
             ;;
         esac
+        echo_progress_done "PKI and certificates generated"
     else
         # If easy-rsa is already installed, grab the generated SERVER_NAME
         # for client configs
@@ -806,6 +814,7 @@ function installOpenVPN() {
     # Make cert revocation list readable for non-root
     chmod 644 /etc/openvpn/crl.pem
 
+    echo_progress_start "Generating server configuration"
     # Generate server.conf
     echo "port $PORT" >/etc/openvpn/server.conf
     if [[ $IPV6_SUPPORT == 'n' ]]; then
@@ -952,6 +961,7 @@ verb 3" >>/etc/openvpn/server.conf
     fi
     # Apply sysctl rules
     sysctl --system
+    echo_progress_done "Server configuration created"
 
     # If SELinux is enabled and a custom port was selected, we need this
     if hash sestatus 2>/dev/null; then
@@ -962,6 +972,7 @@ verb 3" >>/etc/openvpn/server.conf
         fi
     fi
 
+    echo_progress_start "Enabling and starting OpenVPN service"
     # Finally, restart and enable OpenVPN
     if [[ $OS == 'arch' || $OS == 'fedora' || $OS == 'centos' || $OS == 'oracle' || $OS == 'amzn2023' ]]; then
         # Don't modify package-provided service
@@ -993,11 +1004,13 @@ verb 3" >>/etc/openvpn/server.conf
         systemctl enable openvpn@server
         systemctl restart openvpn@server
     fi
+    echo_progress_done "OpenVPN service started"
 
     if [[ $DNS == 2 ]]; then
         installUnbound
     fi
 
+    echo_progress_start "Configuring iptables rules"
     # Add iptables rules in two scripts
     mkdir -p /etc/iptables
 
@@ -1055,6 +1068,7 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
     systemctl daemon-reload
     systemctl enable iptables-openvpn
     systemctl start iptables-openvpn
+    echo_progress_done "Iptables rules configured"
 
     # If the server is behind a NAT, use the correct IP address for the clients to connect to
     if [[ $ENDPOINT != "" ]]; then
@@ -1091,6 +1105,7 @@ verb 3" >>/etc/openvpn/client-template.txt
         echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template.txt
     fi
 
+    echo_progress_start "Generating client configurations"
     # Generate the custom client.ovpn
     CLIENT="seedit4me-user1"
     newClient
@@ -1102,7 +1117,8 @@ verb 3" >>/etc/openvpn/client-template.txt
     newClient
     CLIENT="seedit4me-user5"
     newClient
-    echo "If you want to add more clients, you simply need to run this script another time!"
+    echo_progress_done "Client configurations created"
+    echo_info "If you want to add more clients, you simply need to run this script another time!"
 }
 
 function newClient() {
@@ -1140,7 +1156,7 @@ function newClient() {
             EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT"
             ;;
         esac
-        echo "Client $CLIENT added."
+        echo_info "Client $CLIENT added"
     fi
 
     # Home directory of the user, where the client configuration (.ovpn) will be written
@@ -1385,3 +1401,5 @@ else
 fi
 
 touch /install/.openvpn2.lock
+echo_success "OpenVPN2 installed"
+echo_info "Client configuration files have been created in /home/seedit4me/"
