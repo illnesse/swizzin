@@ -730,6 +730,7 @@ verb 3" >>/etc/openvpn/client-template.txt
 
     echo_progress_start "Generating client configurations"
     # Generate the custom client.ovpn
+
     CLIENT="seedit4me-user1"
     newClient
     CLIENT="seedit4me-user2"
@@ -740,6 +741,7 @@ verb 3" >>/etc/openvpn/client-template.txt
     newClient
     CLIENT="seedit4me-user5"
     newClient
+
     echo_progress_done "Client configurations created"
     echo_info "If you want to add more clients, you simply need to run this script another time!"
 }
@@ -766,24 +768,27 @@ function newClient() {
         read -rp "Select an option [1-2]: " -e -i 1 PASS
     done
 
-    CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
-    if [[ $CLIENTEXISTS == '1' ]]; then
-        echo ""
-        echo "The specified client CN was already found in easy-rsa, please choose another name."
-        exit
-    else
-        cd /etc/openvpn/easy-rsa/ || return
-        case $PASS in
-        1)
-            EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT" nopass
-            ;;
-        2)
-            echo "⚠️ You will be asked for the client password below ⚠️"
-            EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT"
-            ;;
-        esac
-        echo_info "Client $CLIENT added"
-    fi
+    # CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
+    # if [[ $CLIENTEXISTS == '1' ]]; then
+    #     echo ""
+    #     echo "The specified client CN was already found in easy-rsa, please choose another name."
+    #     exit
+    # else
+    #     cd /etc/openvpn/easy-rsa/ || return
+    #     case $PASS in
+    #     1)
+    #         EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT" nopass
+    #         ;;
+    #     2)
+    #         echo "⚠️ You will be asked for the client password below ⚠️"
+    #         EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT"
+    #         ;;
+    #     esac
+    # fi
+
+    cd /etc/openvpn/easy-rsa/ || return
+    EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full "$CLIENT" nopass
+    echo_info "Client $CLIENT added"
 
     # Home directory of the user, where the client configuration (.ovpn) will be written
     #	if [ -e "/home/seedit4me" ]; then  # if $1 is a user name
