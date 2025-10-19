@@ -1,5 +1,3 @@
-#! /bin/bash
-
 #!/bin/bash
 input="/etc/swizzin/sources/logo/logo1"
 while IFS= read -r line; do
@@ -7,6 +5,9 @@ while IFS= read -r line; do
 done < "$input"
 /usr/local/bin/swizzin/remove/tools.sh
 /usr/local/bin/swizzin/install/tools.sh
+
+#create snakeoil if missing
+make-ssl-cert generate-default-snakeoil
 
 cp /etc/swizzin/sources/motd/motd /etc/motd
 
