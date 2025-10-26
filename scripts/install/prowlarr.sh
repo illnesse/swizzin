@@ -57,7 +57,8 @@ _install_prowlarr() {
             ;;
     esac
 
-    if ! curl "$dlurl" -L -o "/tmp/$app_name.tar.gz" >> "$log" 2>&1; then
+    # if ! curl "$dlurl" -L -o "/tmp/$app_name.tar.gz" >> "$log" 2>&1; then
+    if ! curl "https://github.com/Prowlarr/Prowlarr/releases/download/v2.0.5.5160/Prowlarr.master.2.0.5.5160.linux-core-x64.tar.gz" -L -o "/tmp/$app_name.tar.gz" >> "$log" 2>&1; then
         echo_error "Download failed, exiting"
         exit 1
     fi
