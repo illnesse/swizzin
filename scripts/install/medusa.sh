@@ -81,5 +81,5 @@ else
     echo_info "Medusa will run on port 8081"
 fi
 
-echo_success "Medua installed"
+echo_success "Medusa installed"
 touch /install/.medusa.lock
