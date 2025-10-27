@@ -194,7 +194,7 @@ After=network.target
 [Service]
 User=${user}
 ExecStart=/opt/.venv/pyload/bin/pyload
-WorkingDirectory=/opt/pyload
+WorkingDirectory=/home/seedit4me/Downloads/pyLoad
 
 [Install]
 WantedBy=multi-user.target
