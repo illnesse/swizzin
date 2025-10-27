@@ -574,7 +574,7 @@ final_msg() {
     echo "  ${GREEN}${BOLD}${ITALIC}$install_cmd $install_packages${NORMAL}"
   fi
 
-  exit 0
+#   exit 0
 }
 
 # Main
