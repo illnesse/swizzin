@@ -18,6 +18,21 @@ distribution=$(lsb_release -is)
 release=$(lsb_release -cs)
 echo_info "Please note that both xfce4 and x2go are VERY heavy packages to install and will take quite some time. If you're concerned whether the install is still running or not, please inspect the swizzin log through another session by running \`tail -f /root/logs/swizzin.log\`"
 
+add-apt-repository -y ppa:mozillateam/ppa
+
+sudo tee /etc/apt/preferences.d/mozillateam-firefox >/dev/null <<'EOF'
+Package: firefox*
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+
+Package: firefox*
+Pin: release o=Ubuntu
+Pin-Priority: -1
+EOF
+
+apt update
+apt policy firefox | sed -n '1,20p'   # verify Candidate is from LP-PPA-mozillateam
+apt_install firefox || apt_install firefox-esr
 apt_install xfce4 firefox xfce4-terminal
 #disable lightdm because it causes suspend issues on Ubuntu
 systemctl disable --now lightdm >> ${log} 2>&1
