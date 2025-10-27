@@ -305,13 +305,13 @@ ask_confirmation() {
 "\e[47;1;31;82mdevelopment, often containing critical bugs and breaking changes\e[0m\n"
       ;;
   esac
-  if [ "$force_setup" != "1" ]; then
-    printf "Setup ${repo_desc_formatted} repository? (y/N) "
-    read -r sslyn
-    if [ "$sslyn" != "y" ] && [ "$sslyn" != "Y" ]; then
-      exit 0
-    fi
-  fi
+#   if [ "$force_setup" != "1" ]; then
+#     printf "Setup ${repo_desc_formatted} repository? (y/N) "
+#     read -r sslyn
+#     if [ "$sslyn" != "y" ] && [ "$sslyn" != "Y" ]; then
+#       exit 0
+#     fi
+#   fi
 }
 
 check_downloader() {
