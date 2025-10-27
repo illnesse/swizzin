@@ -7,7 +7,7 @@ user=$(grep User= /etc/systemd/system/sonarr.service | cut -d= -f2)
     # fi
 #fi
 
-apt_remove --purge sonarr
+# apt_remove --purge sonarr
 rm -rf /var/lib/sonarr
 
 rm -rf /opt/Sonarr
