@@ -595,7 +595,7 @@ _install_webmin() {
     echo_progress_start "Installing Webmin repo"
     _webmin_installer_script
     apt_update
-    apt-get install --install-recommends webmin usermin
+    apt_install --recommends webmin usermin
 
 }
 
