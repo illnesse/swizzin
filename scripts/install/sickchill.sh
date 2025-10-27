@@ -49,6 +49,7 @@ echo_progress_done
 
 echo_progress_start "Installing requirements.txt with pip"
 sudo -u ${user} bash -c "/opt/.venv/sickchill/bin/pip3 install appdirs" >> $log 2>&1
+sudo -u ${user} bash -c "/opt/.venv/sickchill/bin/pip3 install --upgrade pip setuptools wheel" >> $log 2>&1
 sudo -u ${user} bash -c "/opt/.venv/sickchill/bin/pip3 install -r /opt/sickchill/requirements.txt" >> $log 2>&1
 sudo -u ${user} bash -c "/opt/.venv/sickchill/bin/pip install --upgrade --target /opt/sickchill sickchill" >> $log 2>&1
 echo_progress_done
