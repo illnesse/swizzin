@@ -12,7 +12,7 @@ if [[ -f /etc/nginx/apps/tindex.conf ]]; then
   rm -f /etc/nginx/apps/tindex.conf > /dev/null 2>&1
 fi
 
-add-apt-repository --remove ppa:transmissionbt/ppa -y >> $log 2>&1
+# add-apt-repository --remove ppa:transmissionbt/ppa -y >> $log 2>&1
 apt_remove --purge transmission-common transmission-cli transmission-daemon
 echo_log_only "Removing service file and nginx configs"
 rm /etc/systemd/system/transmission@.service

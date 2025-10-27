@@ -49,18 +49,18 @@ function whiptail_transmission_source() {
 }
 
 function _install_transmission() {
-    whiptail_transmission_source
-    distribution=$(lsb_release -is)
-    if [[ $TRANSMISSION_SOURCE = "PPA" ]]; then
-        if [[ ! $distribution =~ 'Ubuntu' ]]; then
-            echo_warn "PPA not available on this system, using normal repo."
-            return 1
-        else
-            echo_progress_start "Adding Transmission PPA"
-            add-apt-repository ppa:transmissionbt/ppa -y >> "$log" 2>&1
-            echo_progress_done "PPA Added"
-        fi
-    fi
+    # whiptail_transmission_source
+    # distribution=$(lsb_release -is)
+    # if [[ $TRANSMISSION_SOURCE = "PPA" ]]; then
+    #     if [[ ! $distribution =~ 'Ubuntu' ]]; then
+    #         echo_warn "PPA not available on this system, using normal repo."
+    #         return 1
+    #     else
+    #         echo_progress_start "Adding Transmission PPA"
+    #         add-apt-repository ppa:transmissionbt/ppa -y >> "$log" 2>&1
+    #         echo_progress_done "PPA Added"
+    #     fi
+    # fi
     apt_install transmission-cli transmission-common transmission-daemon
     echo_progress_start "Disabling default non-multiuser service"
     systemctl disable -q --now transmission-daemon >> "$log" 2>&1
