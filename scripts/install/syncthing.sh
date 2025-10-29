@@ -39,7 +39,7 @@ Wants=syncthing-inotify@.service
 
 [Service]
 User=%i
-ExecStart=/usr/bin/syncthing -no-browser -no-restart -logflags=0
+ExecStart=/usr/bin/syncthing
 Restart=on-failure
 SuccessExitStatus=3 4
 RestartForceExitStatus=3 4
