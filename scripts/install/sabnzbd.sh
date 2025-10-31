@@ -66,6 +66,7 @@ fi
 
 /opt/.venv/sabnzbd/bin/pip install --upgrade pip wheel >> "${log}" 2>&1
 /opt/.venv/sabnzbd/bin/pip install -r /opt/sabnzbd/requirements.txt >> "${log}" 2>&1
+/opt/.venv/sabnzbd/bin/pip install rarfile >> "${log}" 2>&1
 /opt/.venv/sabnzbd/bin/pip install sabctools >> "${log}" 2>&1
 echo_progress_done
 
