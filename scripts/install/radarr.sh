@@ -13,15 +13,7 @@ _install_radarr() {
     chown -R "$radarrOwner":"$radarrOwner" /home/$radarrOwner/.config
 
     echo_progress_start "Downloading release archive"
-    case "$(_os_arch)" in
-        "amd64") dlurl="https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" ;;
-        "armhf") dlurl="https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=arm" ;;
-        "arm64") dlurl="https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=arm64" ;;
-        *)
-            echo_error "Arch not supported"
-            exit 1
-            ;;
-    esac
+    dlurl="https://github.com/Radarr/Radarr/releases/download/v6.0.2.10271/Radarr.develop.6.0.2.10271.linux-core-x64.tar.gz"
 
     if ! curl "$dlurl" -L -o /tmp/Radarr.tar.gz >> "$log" 2>&1; then
         echo_error "Download failed, exiting"
