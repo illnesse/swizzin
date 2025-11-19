@@ -13,7 +13,7 @@ _install_radarr() {
     chown -R "$radarrOwner":"$radarrOwner" /home/$radarrOwner/.config
 
     echo_progress_start "Downloading release archive"
-    dlurl="https://github.com/Radarr/Radarr/releases/download/v6.0.2.10271/Radarr.develop.6.0.2.10271.linux-core-x64.tar.gz"
+    dlurl="https://github.com/Radarr/Radarr/releases/download/v5.17.0.9555/Radarr.develop.5.17.0.9555.linux-core-x64.tar.gz"
 
     if ! curl "$dlurl" -L -o /tmp/Radarr.tar.gz >> "$log" 2>&1; then
         echo_error "Download failed, exiting"
