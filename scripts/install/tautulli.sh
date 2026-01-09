@@ -16,11 +16,18 @@
 
 user=$(cut -d: -f1 < /root/.master.info)
 
-add-apt-repository --yes ppa:deadsnakes/ppa
-apt_update
 
+apt install -y --allow-downgrades --reinstall libidn2-0=2.2.0-2
+apt install -y libidn2-dev -o Debug::pkgProblemResolver=yes
+apt_install libidn2-dev
+apt_install libgnutls28-dev libxmlsec1-dev
 
-apt_install python3-dev python3-setuptools python3-pip python3-venv python3.11-venv gnutls-bin
+. /etc/swizzin/sources/functions/pyenv
+pyenv_install
+pyenv_install_version 3.11.0
+pyenv_create_venv 3.11.0 /opt/.venv/tautulli
+
+apt_install gnutls-bin
 
 cd /opt
 echo_progress_start "Cloning latest Tautulli repo"
@@ -41,7 +48,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/python3.11 /opt/tautulli/Tautulli.py --quiet --daemon --nolaunch --config /opt/tautulli/config.ini --datadir /opt/tautulli
+ExecStart=/opt/.venv/tautulli/bin/python3 /opt/tautulli/Tautulli.py --quiet --daemon --nolaunch --config /opt/tautulli/config.ini --datadir /opt/tautulli
 GuessMainPID=no
 Type=forking
 User=tautulli
