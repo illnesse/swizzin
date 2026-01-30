@@ -1,6 +1,4 @@
 #!/bin/bash
-# autobrr remover
-# ludviglundgren 2021 for Swizzin
 
 #shellcheck source=sources/functions/utils
 . /etc/swizzin/sources/functions/utils
@@ -14,7 +12,7 @@ function _remove_flaresolverr() {
 
     rm -rf /opt/.venv/flaresolverr
 
-    apt_remove chromium xvfb
+    apt_remove chromium-browser xvfb
 
     systemctl daemon-reload -q
     systemctl reload nginx
