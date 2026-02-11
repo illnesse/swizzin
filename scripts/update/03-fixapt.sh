@@ -12,8 +12,8 @@
 # add-apt-repository -y ppa:ondrej/nginx
 
 # # Ensure correct PHP PPA by re-adding it. This will fetch the current definition for 'focal'.
-# echo_log_only "Configuring PHP PPA (re-adding to refresh)"
-# add-apt-repository -y ppa:ondrej/php
+echo_log_only "Configuring PHP PPA (re-adding to refresh)"
+add-apt-repository -y ppa:ondrej/php
 
 # # Attempt to update main Ubuntu repository and Ondrej PHP PPA paths to use mirrors
 # # This targets /etc/apt/sources.list since /etc/apt/sources.list.d/ is empty.
