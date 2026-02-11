@@ -105,6 +105,7 @@ $apps = array(
     array("name" => "sickchill",      "service" => "sickchill",         "user" => ""),
     array("name" => "medusa",         "service" => "medusa",            "user" => ""),
     array("name" => "netdata",        "service" => "netdata",           "user" => ""),
+    array("name" => "qui",            "service" => "qui",               "user" => ""),
     array("name" => "rar2fs",         "service" => "mountrar2fs",       "user" => ""),
     array("name" => "sonarr",         "service" => "sonarr",            "user" => ""),
     array("name" => "sonarr4k",       "service" => "sonarr4k",          "user" => ""),
