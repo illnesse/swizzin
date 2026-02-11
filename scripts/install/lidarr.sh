@@ -38,6 +38,9 @@ install() {
             ;;
     esac
 
+    # pin to this ver
+    dlurl="https://github.com/Lidarr/Lidarr/releases/download/v2.14.5.4836/Lidarr.master.2.14.5.4836.linux-core-x64.tar.gz"
+
     if ! curl "$dlurl" -L -o /tmp/lidarr.tar.gz >> "$log" 2>&1; then
         echo_error "Download failed, exiting"
         exit 1
