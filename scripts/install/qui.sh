@@ -24,9 +24,9 @@ chown -R ${user}:${user} /var/log/qui
 sudo -u ${user} qui generate-config --config-dir /home/${user}/.config/qui/
 
 # Set base URL in config
-sed -i 's|baseUrl = ""|baseUrl = "/qui/"|' /home/${user}/.config/qui/config.toml
-sed -i 's|host = "0.0.0.0"|host = "127.0.0.1"|' /home/${user}/.config/qui/config.toml
-sed -i 's|logPath = ""|logPath = "/var/log/qui/qui.log"|' /home/${user}/.config/qui/config.toml
+sed -i 's|^#*\s*baseUrl\s*=.*|baseUrl = "/qui/"|' /home/${user}/.config/qui/config.toml
+sed -i 's|^#*\s*host\s*=.*|host = "127.0.0.1"|' /home/${user}/.config/qui/config.toml
+sed -i 's|^#*\s*logPath\s*=.*|logPath = "/var/log/qui/qui.log"|' /home/${user}/.config/qui/config.toml
 
 echo_progress_done "qui configured"
 
