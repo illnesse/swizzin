@@ -1,4 +1,4 @@
-# #!/bin/bash
+#!/bin/bash
 
 # echo_progress_start "Updating apt repository sources"
 
@@ -8,12 +8,16 @@
 # if [ -f /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list ]; then
 #     rm /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list
 # fi
+# # Ensure correct PPA by re-adding it
+if ! grep -rq "ondrej/nginx" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+    echo_log_only "Adding ondrej/nginx PPA"
+    add-apt-repository -y ppa:ondrej/nginx
+fi
 
-# add-apt-repository -y ppa:ondrej/nginx
-
-# # Ensure correct PHP PPA by re-adding it. This will fetch the current definition for 'focal'.
-echo_log_only "Configuring PHP PPA (re-adding to refresh)"
-add-apt-repository -y ppa:ondrej/php
+if ! grep -rq "ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+    echo_log_only "Adding ondrej/php PPA"
+    add-apt-repository -y ppa:ondrej/php
+fi
 
 # # Attempt to update main Ubuntu repository and Ondrej PHP PPA paths to use mirrors
 # # This targets /etc/apt/sources.list since /etc/apt/sources.list.d/ is empty.

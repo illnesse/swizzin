@@ -18,7 +18,10 @@ user=$(cut -d: -f1 </root/.master.info)
 nextpass=$(cut -d: -f2 </root/.master.info)
 password=$(cut -d: -f2 </root/.master.info)
 
-inst=$(mysql -V)
+# Only check mysql version if mysql command exists
+if [[ -n $inst ]]; then
+    inst=$(mysql -V)
+fi
 ip=$(ip route get 1 | sed -n 's/^.*src \([0-9.]*\) .*$/\1/p')
 if [[ ! -f /install/.nginx.lock ]]; then
     echo_error "Web server not detected. Please install nginx and restart panel install."

@@ -21,11 +21,7 @@ function update_nginx() {
         fi
     fi
 
-    #not sure why this is preinstalled on the template, unused and caused upgrade issues so lets remove it
-    apt_remove libnginx-mod-http-geoip
-
     LIST="php8.2-fpm php8.2-cli php8.2-dev php8.2-xml php8.2-curl php8.2-mcrypt php8.2-mbstring php8.2-xml"
-    #php-geoip php-json
 
     missing=()
     for dep in $LIST; do
