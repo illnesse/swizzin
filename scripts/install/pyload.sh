@@ -56,7 +56,7 @@ echo_progress_done
 # echo "/opt/pyload" > /opt/pyload/module/config/configdir
 
 # cat > /opt/pyload/pyload.conf << PYCONF
-# version: 1 
+# version: 1
 
 # download - "Download":
 #         int chunks : "Max connections for one download" = 3
@@ -128,7 +128,7 @@ echo_progress_done
 #         ip host : "IP" = 0.0.0.0
 #         bool https : "Use HTTPS" = False
 #         int port : "Port" = 8712
-#         str prefix : "Path Prefix" = 
+#         str prefix : "Path Prefix" =
 #         builtin;threaded;fastcgi;lightweight server : "Server" = builtin
 #         modern;pyplex;classic template : "Template" = modern
 # PYCONF
@@ -180,7 +180,7 @@ echo_progress_done
 #     #TODO maybe exit then?
 # fi
 
-/opt/.venv/pyload/bin/pyload --dry-run
+sudo -u ${user} /opt/.venv/pyload/bin/pyload --userdir /home/${user}/.pyload --dry-run
 sed -i 's/int port : "Port" = 8000/int port : "Port" = 8712/' /home/${user}/.pyload/settings/pyload.cfg
 sed -i 's|str prefix : "Path prefix" .*|str prefix : "Path prefix" = /pyload|' /home/${user}/.pyload/settings/pyload.cfg
 
@@ -194,7 +194,7 @@ After=network.target
 [Service]
 User=${user}
 ExecStart=/opt/.venv/pyload/bin/pyload
-WorkingDirectory=/home/seedit4me/Downloads/pyLoad
+WorkingDirectory=/home/${user}/Downloads/pyLoad
 
 [Install]
 WantedBy=multi-user.target

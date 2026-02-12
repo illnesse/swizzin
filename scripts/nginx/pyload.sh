@@ -19,8 +19,8 @@ location /pyload/ {
   auth_basic_user_file /etc/htpasswd.d/htpasswd.${user};
 }
 PYLOAD
-    sed -i 's/"Path prefix" = /"Path prefix" = \/pyload/g' /opt/pyload/pyload.conf
-    sed -i 's/"IP" = 0.0.0.0/"IP" = 127.0.0.1/g' /opt/pyload/pyload.conf
+    sed -i 's|str prefix : "Path prefix" .*|str prefix : "Path prefix" = /pyload|' /home/${user}/.pyload/settings/pyload.cfg
+    sed -i 's|ip host : "IP" = 0.0.0.0|ip host : "IP" = 127.0.0.1|' /home/${user}/.pyload/settings/pyload.cfg
 fi
 
   # sub_filter_types text/css text/xml text/javascript;
