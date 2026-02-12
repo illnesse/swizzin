@@ -21,6 +21,34 @@ function update_nginx() {
         fi
     fi
 
+    # Purge all installed versioned php packages except php8.2* and php7.3*
+    # Must happen before installing php8.2 to avoid dependency conflicts
+    # Only targets phpX.Y-* packages; leaves versionless meta-packages (php-common etc.) alone
+    mapfile -t php_pkgs < <(dpkg -l 'php*' 2>/dev/null | awk '/^ii/ {print $2}' | grep -E '^php[0-9]' | grep -Ev '^php(8\.2|7\.3)')
+    if [[ ${#php_pkgs[@]} -gt 0 ]]; then
+        echo "Purging non-8.2/7.3 PHP packages: ${php_pkgs[*]}"
+        apt_remove --purge "${php_pkgs[@]}"
+    fi
+
+    # Remove php-xmlrpc if installed — old versions break php-common on upgrade
+    if dpkg -l php-xmlrpc 2>/dev/null | grep -q '^ii'; then
+        echo "Purging php-xmlrpc to avoid php-common conflict"
+        apt_remove --purge php-xmlrpc
+    fi
+
+    apt_autoremove
+
+    # Clean up leftover /etc/php directories for removed versions
+    for phpdir in /etc/php/*; do
+        if [[ -d "$phpdir" ]]; then
+            phpver=$(basename "$phpdir")
+            if [[ "$phpver" != "8.2" && "$phpver" != "7.3" ]]; then
+                echo "Removing leftover /etc/php/$phpver"
+                rm -rf "$phpdir"
+            fi
+        fi
+    done
+
     LIST="php8.2-fpm php8.2-cli php8.2-dev php8.2-xml php8.2-curl php8.2-mcrypt php8.2-mbstring php8.2-xml"
 
     missing=()
@@ -37,29 +65,6 @@ function update_nginx() {
 
     cd /etc/php
     phpv=$(ls -d */ | cut -d/ -f1)
-    if [[ $phpv =~ 7\\.1 ]]; then
-        if [[ $phpv =~ 7\\.0 ]]; then
-            apt_remove --purge php7.0-fpm
-        fi
-    fi
-
-    # Purge all installed php packages except php8.2* and php7.3*
-    mapfile -t php_pkgs < <(dpkg -l 'php*' 2>/dev/null | awk '/^ii/ {print $2}' | grep -Ev '^php(8\.2|7\.3)')
-    if [[ ${#php_pkgs[@]} -gt 0 ]]; then
-        echo "Purging non-8.2/7.3 PHP packages: ${php_pkgs[*]}"
-        apt_remove --purge "${php_pkgs[@]}"
-    fi
-
-    # Clean up leftover /etc/php directories for removed versions
-    for phpdir in /etc/php/*; do
-        if [[ -d "$phpdir" ]]; then
-            phpver=$(basename "$phpdir")
-            if [[ "$phpver" != "8.2" && "$phpver" != "7.3" ]]; then
-                echo "Removing leftover /etc/php/$phpver"
-                rm -rf "$phpdir"
-            fi
-        fi
-    done
 
     . /etc/swizzin/sources/functions/php
     phpversion=$(php_service_version)
