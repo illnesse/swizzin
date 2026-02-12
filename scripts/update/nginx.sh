@@ -111,11 +111,11 @@ function update_nginx() {
         sed -i "s/fastcgi_pass .*/fastcgi_pass unix:\/run\/php\/php${phpversion}-fpm.sock;/g" $fix
     done
 
-    if grep -q -e "-dark" -e "Nginx-Fancyindex" /srv/fancyindex/header.html; then
+    if [[ -f /srv/fancyindex/header.html ]] && grep -q -e "-dark" -e "Nginx-Fancyindex" /srv/fancyindex/header.html; then
         sed -i 's/href="\/[^\/]*/href="\/fancyindex/g' /srv/fancyindex/header.html
     fi
 
-    if grep -q "Nginx-Fancyindex" /srv/fancyindex/footer.html; then
+    if [[ -f /srv/fancyindex/footer.html ]] && grep -q "Nginx-Fancyindex" /srv/fancyindex/footer.html; then
         sed -i 's/src="\/[^\/]*/src="\/fancyindex/g' /srv/fancyindex/footer.html
     fi
 
