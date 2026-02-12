@@ -43,13 +43,20 @@ function update_nginx() {
         fi
     fi
 
-    # Purge all PHP versions except 8.2 and 7.3
+    # Purge all installed php packages except php8.2* and php7.3*
+    mapfile -t php_pkgs < <(dpkg -l 'php*' 2>/dev/null | awk '/^ii/ {print $2}' | grep -Ev '^php(8\.2|7\.3)')
+    if [[ ${#php_pkgs[@]} -gt 0 ]]; then
+        echo "Purging non-8.2/7.3 PHP packages: ${php_pkgs[*]}"
+        apt_remove --purge "${php_pkgs[@]}"
+    fi
+
+    # Clean up leftover /etc/php directories for removed versions
     for phpdir in /etc/php/*; do
         if [[ -d "$phpdir" ]]; then
             phpver=$(basename "$phpdir")
             if [[ "$phpver" != "8.2" && "$phpver" != "7.3" ]]; then
-                echo "Purging PHP version $phpver"
-                apt_remove --purge php${phpver}*
+                echo "Removing leftover /etc/php/$phpver"
+                rm -rf "$phpdir"
             fi
         fi
     done
