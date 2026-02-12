@@ -181,8 +181,9 @@ echo_progress_done
 # fi
 
 sudo -u ${user} /opt/.venv/pyload/bin/pyload --userdir /home/${user}/.pyload --dry-run
-sed -i 's/int port : "Port" = 8000/int port : "Port" = 8712/' /home/${user}/.pyload/settings/pyload.cfg
-sed -i 's|str prefix : "Path prefix" .*|str prefix : "Path prefix" = /pyload|' /home/${user}/.pyload/settings/pyload.cfg
+sed -i 's|int port : "Port.*|int port : "Port" = 8712|' /home/${user}/.pyload/settings/pyload.cfg
+sed -i 's|str prefix : "Path prefix.*|str prefix : "Path prefix" = /pyload|' /home/${user}/.pyload/settings/pyload.cfg
+sed -i 's|ip host : "IP.*|ip host : "IP address" = 127.0.0.1|' /home/${user}/.pyload/settings/pyload.cfg
 
 
 echo_progress_start "Installing systemd service"
