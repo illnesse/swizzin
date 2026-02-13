@@ -30,9 +30,7 @@ function _removeBTSync() {
     rm -rf /etc/systemd/system/resilio-sync.service
     rm -rf /home/${MASTER}/sync_folder
     rm -rf /home/${MASTER}/.config/resilio-sync
-    rm /etc/nginx/apps/btsync.conf
     rm /install/.btsync.lock
-    systemctl reload nginx
 }
 
 _removeBTSync

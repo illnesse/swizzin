@@ -84,12 +84,6 @@ echo_progress_start "Setting up btsync configurations"
 _installBTSync5
 echo_progress_done "Configured"
 
-echo_progress_start "Configuring nginx"
-bash /usr/local/bin/swizzin/nginx/btsync.sh
-systemctl reload nginx
-echo_progress_done "nginx configured"
-
-
 echo_progress_start "Starting btsync"
 _installBTSync6
 echo_progress_done "Started"
