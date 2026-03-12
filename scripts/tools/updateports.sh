@@ -38,6 +38,17 @@ if [[ -f /install/.$app.lock ]]; then
   echo_success "${app} ports updated."
 fi
 
+app="qbittorrent5"
+if [[ -f /install/.$app.lock ]]; then
+  echo_info "updating ports for ${app}."
+  systemctl stop qbittorrent@${user}
+  sleep 3
+  port=$(cat /home/seedit4me/.qbittorrent_port)
+  sed -i "s/Connection\\\PortRangeMin.*/Connection\\\PortRangeMin=${port}/g" /home/${user}/.config/qBittorrent/qBittorrent.conf
+  systemctl start qbittorrent@${user}
+  echo_success "${app} ports updated."
+fi
+
 app="btsync"
 if [[ -f /install/.$app.lock ]]; then
   echo_info "updating ports for ${app}."
