@@ -27,14 +27,17 @@ master=$(cut -d: -f1 < /root/.master.info)
 #releases=$(grep -ioe '"label"[^}]*' <<<"${wgetresults}" | grep -i "\"distro\":\"ubuntu\"" | grep -m1 -i "\"build\":\"linux-ubuntu-x86_64\"")
 #latest=$(echo ${releases} | grep -m1 -ioe 'https://[^\"]*')
 
-echo_progress_start "Installing plex keys and sources ... "
-apt_install apt-transport-https
-curl -s https://downloads.plex.tv/plex-keys/PlexSign.key | gpg --dearmor > /usr/share/keyrings/plex-archive-keyring.gpg 2>> "${log}"
-echo "deb [signed-by=/usr/share/keyrings/plex-archive-keyring.gpg] https://downloads.plex.tv/repo/deb public main" > /etc/apt/sources.list.d/plexmediaserver.list
-echo
+echo_progress_start "Setting up Plex repository..."
+apt_install apt-transport-https curl gnupg2
+# Remove any old plex repo files (plexmediaserver.list or plex.list from prior installs)
+rm -f /etc/apt/sources.list.d/plex*.list /etc/apt/sources.list.d/plexmediaserver.list
+# Download new v2 signing key and install to keyring
+curl -L https://downloads.plex.tv/plex-keys/PlexSign.v2.key 2>>"${log}" | gpg --yes --dearmor -o /usr/share/keyrings/plexmediaserver.v2.gpg 2>>"${log}"
+# Write new repo source entry pointing to repo.plex.tv
+echo "deb [signed-by=/usr/share/keyrings/plexmediaserver.v2.gpg] https://repo.plex.tv/deb/ public main" > /etc/apt/sources.list.d/plex.list
+echo_progress_done "Plex repository configured"
 
 apt_update
-echo_progress_done "Sources and keys retrieved and installed"
 
 apt_install plexmediaserver
 
