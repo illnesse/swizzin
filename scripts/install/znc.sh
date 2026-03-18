@@ -74,6 +74,7 @@ Version = 1.6.3
         IPv4 = true
         IPv6 = false
         SSL = false
+        TrustProxy = true
 </Listener>
 LoadModule = webadmin
 
