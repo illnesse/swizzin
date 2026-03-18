@@ -24,8 +24,7 @@ fi
 
 if [[ ! -f /etc/nginx/apps/btsync.conf ]]; then
     cat > /etc/nginx/apps/btsync.conf << BTSNGINX
-# Resilio Sync Web Interface
-location /resilio/ {
+location /btsync/ {
     proxy_pass http://127.0.0.1:${port}/gui/;
     proxy_set_header Host \$host;
     proxy_set_header X-Real-IP \$remote_addr;
@@ -50,8 +49,8 @@ location /resilio/ {
     auth_basic_user_file /etc/htpasswd;
 }
 
-location /resilio {
-    return 301 \$scheme://\$host/resilio/;
+location /btsync {
+    return 301 \$scheme://\$host/btsync/;
 }
 BTSNGINX
 fi
