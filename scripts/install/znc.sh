@@ -54,8 +54,10 @@ Restart=always
 WantedBy=multi-user.target
 ZNC
 
-mkdir /home/znc/.znc
-mkdir /home/znc/.znc/configs
+sudo -u znc mkdir -p /home/znc/.znc
+sudo -u znc mkdir /home/znc/.znc/configs
+chmod 700 /home/znc
+sudo -u znc znc --makepem
 
 cat > /home/znc/.znc/configs/znc.conf << ZNCONF
 // WARNING
@@ -68,21 +70,14 @@ cat > /home/znc/.znc/configs/znc.conf << ZNCONF
 // But if you feel risky, you might want to read help on /znc saveconfig and /znc rehash.
 // Also check http://en.znc.in/wiki/Configuration
 
-Version = 1.6.3
+Version = 1.9.0
 <Listener l>
-        Port = $port
-        IPv4 = true
-        IPv6 = false
-        SSL = false
-</Listener>
-<Listener h>
-        Port = 28405
-        IPv4 = true
-        IPv6 = false
-        Host = *
-        SSL = false
-        HTTP = on
-        URIPrefix = /znc
+    Port = 28404
+    IPv4 = true
+    IPv6 = false
+    SSL  = true
+    AllowIRC = true
+    AllowWeb = true
 </Listener>
 
 LoadModule = webadmin
