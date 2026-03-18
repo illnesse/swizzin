@@ -23,7 +23,7 @@ if [[ ! -f /etc/nginx/apps/znc.conf ]]; then
 # ZNC IRC Bouncer - Web Admin Interface
 # IRC clients connect directly to ZNC on port ${port}; this proxies only the web UI.
 location /znc/ {
-    proxy_pass http://127.0.0.1:${port}/;
+    proxy_pass https://127.0.0.1:${port}/znc/;
     proxy_set_header Host \$host;
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;

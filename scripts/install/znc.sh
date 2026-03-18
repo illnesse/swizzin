@@ -78,6 +78,7 @@ Version = 1.9.0
     SSL  = true
     AllowIRC = true
     AllowWeb = true
+    URIPrefix = /znc/
 </Listener>
 
 LoadModule = webadmin
