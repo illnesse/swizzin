@@ -3,10 +3,12 @@
 # Author: swizzin
 # Licensed under GNU General Public License v3.0 GPL-3
 #
-# Resilio Sync's web UI is proxied through nginx SSL terminator so it is
-# accessible at https://<hostname>/resilio/
-# The app listens on a local port only (0.0.0.0 is acceptable since nginx
-# is the public-facing entry point).
+# Resilio Sync's web UI is served at /gui/ internally. The JS app makes all
+# API calls to absolute paths like /gui/token.html, so nginx must proxy /gui/
+# directly — not rewrite it to a different prefix.
+#
+# User-facing entry point: https://<hostname>/gui/
+# A convenience redirect is added at /resilio -> /gui/
 
 # Get Resilio Sync webui port from config
 if [[ -f /etc/resilio-sync/config.json ]]; then
@@ -24,7 +26,7 @@ fi
 
 if [[ ! -f /etc/nginx/apps/btsync.conf ]]; then
     cat > /etc/nginx/apps/btsync.conf << BTSNGINX
-location /btsync/ {
+location /gui/ {
     proxy_pass http://127.0.0.1:${port}/gui/;
     proxy_set_header Host \$host;
     proxy_set_header X-Real-IP \$remote_addr;
@@ -49,8 +51,8 @@ location /btsync/ {
     auth_basic_user_file /etc/htpasswd;
 }
 
-location /btsync {
-    return 301 \$scheme://\$host/btsync/;
+location /gui {
+    return 301 \$scheme://\$host/gui/;
 }
 BTSNGINX
 fi
