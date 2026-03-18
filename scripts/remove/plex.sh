@@ -31,6 +31,14 @@ function _removePlex() {
     rm /etc/default/plexmediaserver > /dev/null 2>&1
     rm /install/.plex.lock
     userdel plex > /dev/null 2>&1
+
+    # Remove nginx reverse proxy config and reload
+    if [[ -f /etc/nginx/apps/plex.conf ]]; then
+        rm -f /etc/nginx/apps/plex.conf
+        if [[ -f /install/.nginx.lock ]]; then
+            nginx -t >> "${log}" 2>&1 && systemctl reload nginx >> "${log}" 2>&1
+        fi
+    fi
 }
 
 _removePlex

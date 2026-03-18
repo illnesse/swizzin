@@ -31,6 +31,14 @@ function _removeBTSync() {
     rm -rf /home/${MASTER}/sync_folder
     rm -rf /home/${MASTER}/.config/resilio-sync
     rm /install/.btsync.lock
+
+    # Remove nginx reverse proxy config and reload
+    if [[ -f /etc/nginx/apps/btsync.conf ]]; then
+        rm -f /etc/nginx/apps/btsync.conf
+        if [[ -f /install/.nginx.lock ]]; then
+            nginx -t >> "${log}" 2>&1 && systemctl reload nginx >> "${log}" 2>&1
+        fi
+    fi
 }
 
 _removeBTSync
