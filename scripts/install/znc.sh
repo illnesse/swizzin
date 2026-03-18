@@ -74,8 +74,17 @@ Version = 1.6.3
         IPv4 = true
         IPv6 = false
         SSL = false
-        TrustProxy = true
 </Listener>
+<Listener h>
+        Port = 28405
+        IPv4 = true
+        IPv6 = false
+        Host = *
+        SSL = false
+        HTTP = on
+        URIPrefix = /znc
+</Listener>
+
 LoadModule = webadmin
 
 <User seedit4me>

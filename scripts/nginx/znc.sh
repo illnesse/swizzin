@@ -7,10 +7,6 @@
 # ZNC handles its own authentication, so no auth_basic is needed here.
 # IRC clients connect directly to ZNC's IRC port (not through nginx).
 # The LE cert is also copied into znc.pem so ZNC can offer SSL on its IRC port.
-#
-# IMPORTANT: ZNC must have TrustProxy = true in znc.conf so it accepts the
-# X-Forwarded-For header from nginx and does not reject sessions because the
-# IP appears to change between requests (nginx → ZNC vs client → nginx).
 
 # Get ZNC HTTP port from config (the webadmin listener port)
 if [[ -f /home/znc/.znc/configs/znc.conf ]]; then
@@ -20,22 +16,6 @@ fi
 # Fallback to default port if config not found or empty
 if [[ -z "$port" ]]; then
     port=6667
-fi
-
-# Enable TrustProxy in ZNC config so it honours X-Forwarded-For from nginx.
-# Without this ZNC sees every request as coming from 127.0.0.1 and rejects
-# the session when the browser's real IP differs.
-if [[ -f /home/znc/.znc/configs/znc.conf ]]; then
-    if ! grep -q 'TrustProxy' /home/znc/.znc/configs/znc.conf; then
-        # Insert TrustProxy = true inside the <Listener l> block
-        sed -i '/^<Listener l>/,/^<\/Listener>/ {
-            /^<\/Listener>/ i\        TrustProxy = true
-        }' /home/znc/.znc/configs/znc.conf
-    else
-        sed -i 's/TrustProxy\s*=\s*.*/TrustProxy = true/' /home/znc/.znc/configs/znc.conf
-    fi
-    # Restart ZNC to pick up the config change
-    systemctl restart znc >> /dev/null 2>&1
 fi
 
 if [[ ! -f /etc/nginx/apps/znc.conf ]]; then
