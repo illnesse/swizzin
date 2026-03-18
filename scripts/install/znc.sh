@@ -38,7 +38,7 @@ elif [[ $CODENAME == "bionic" ]]; then
     apt_update
 fi
 apt_install znc
-#sudo -u znc crontab -l | echo -e "*/10 * * * * /usr/bin/znc >/dev/null 2>&1\n@reboot /usr/bin/znc >/dev/null 2>&1" | crontab -u znc - > /dev/null 2>&1
+
 echo_progress_start "Installing systemd service"
 cat > /etc/systemd/system/znc.service << ZNC
 [Unit]
@@ -100,18 +100,25 @@ chmod -R 777 /home/znc/.znc/configs
 systemctl enable -q znc
 echo_progress_done
 
-#echo_warn "ZNC configuration will now run. Please answer the following prompts"
 sleep 5
-#sudo -H -u znc znc --makeconf
 killall -u znc znc > /dev/null 2>&1
 sleep 1
 
-# Check for LE cert, and copy it if available.
+# Check for LE cert, and copy it into znc.pem so ZNC can offer SSL on its IRC port.
 if [[ -f /install/nginx.lock ]]; then
     le_znc_hook
 fi
 
 systemctl start znc
+
+# Install nginx reverse proxy config for ZNC web admin UI
+if [[ -f /install/.nginx.lock ]]; then
+    echo_progress_start "Installing nginx config for znc"
+    bash /etc/swizzin/scripts/nginx/znc.sh
+    systemctl reload nginx >> $log 2>&1
+    echo_progress_done "Nginx config for znc installed"
+fi
+
 echo "$(grep Port /home/znc/.znc/configs/znc.conf | sed -e 's/^[ \t]*//')" > /install/.znc.lock
 echo "$(grep SSL /home/znc/.znc/configs/znc.conf | sed -e 's/^[ \t]*//')" >> /install/.znc.lock
 echo_success "ZNC installed"

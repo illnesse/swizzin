@@ -88,4 +88,12 @@ echo_progress_start "Starting btsync"
 _installBTSync6
 echo_progress_done "Started"
 
+# Install nginx reverse proxy config for Resilio Sync web UI
+if [[ -f /install/.nginx.lock ]]; then
+    echo_progress_start "Installing nginx config for btsync"
+    bash /etc/swizzin/scripts/nginx/btsync.sh
+    systemctl reload nginx >> $log 2>&1
+    echo_progress_done "Nginx config for btsync installed"
+fi
+
 echo_success "BTSync installed"

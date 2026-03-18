@@ -18,15 +18,6 @@
 
 master=$(cut -d: -f1 < /root/.master.info)
 
-#echo_info "Please visit https://www.plex.tv/claim, login, copy your plex claim token to your clipboard and paste it here. This will automatically claim your server! Otherwise, you can leave this blank and to tunnel to the port instead."
-#echo_query "Insert your Plex claim token" "e.g. 'claim-...' or blank"
-#read 'claim'
-
-#versions=https://plex.tv/api/downloads/1.json
-#wgetresults="$(wget "${versions}" -O -)"
-#releases=$(grep -ioe '"label"[^}]*' <<<"${wgetresults}" | grep -i "\"distro\":\"ubuntu\"" | grep -m1 -i "\"build\":\"linux-ubuntu-x86_64\"")
-#latest=$(echo ${releases} | grep -m1 -ioe 'https://[^\"]*')
-
 echo_progress_start "Installing plex keys and sources ... "
 apt_install apt-transport-https
 curl -s https://downloads.plex.tv/plex-keys/PlexSign.key | gpg --dearmor > /usr/share/keyrings/plex-archive-keyring.gpg 2>> "${log}"
@@ -60,6 +51,74 @@ chown -R plex:plex '/var/lib/plexmediaserver/Library/Application Support'
 sleep 5
 
 systemctl start plexmediaserver >> $log 2>&1
+
+# Wait for Plex to create its Preferences.xml on first start
+echo_progress_start "Waiting for Plex to initialise preferences"
+PREFS_DIR="/home/${master}/plex/Application Support/Plex Media Server"
+timeout=60
+elapsed=0
+while [[ ! -f "${PREFS_DIR}/Preferences.xml" ]] && [[ $elapsed -lt $timeout ]]; do
+    sleep 2
+    elapsed=$((elapsed + 2))
+done
+echo_progress_done
+
+# Configure Plex to work behind the nginx reverse proxy so that it does not
+# redirect clients back to the raw port 32400.
+# We set:
+#   allowedNetworks      - trust the loopback so nginx can reach the API
+#   customConnections    - the public HTTPS URL Plex advertises to clients
+#   RelayEnabled         - disable Plex Relay (we have a direct connection)
+if [[ -f "${PREFS_DIR}/Preferences.xml" ]]; then
+    echo_progress_start "Configuring Plex reverse proxy preferences"
+
+    # Determine the public hostname (from nginx default site if available)
+    if [[ -f /etc/nginx/sites-enabled/default ]]; then
+        public_host=$(grep -m1 "server_name" /etc/nginx/sites-enabled/default | awk '{print $2}' | sed 's/;//g')
+    fi
+    # Fall back to the machine's primary IP
+    if [[ -z "$public_host" ]] || [[ "$public_host" == "_" ]]; then
+        public_host=$(ip route get 1 | sed -n 's/^.*src \([0-9.]*\) .*$/\1/p')
+    fi
+
+    systemctl stop plexmediaserver >> $log 2>&1
+    sleep 2
+
+    # Inject/update attributes in Preferences.xml using sed.
+    # If the attribute already exists we update it; if not we append before />.
+    _plex_pref_set() {
+        local key="$1"
+        local val="$2"
+        local prefs="${PREFS_DIR}/Preferences.xml"
+        if grep -q "${key}=" "${prefs}"; then
+            sed -i "s|${key}=\"[^\"]*\"|${key}=\"${val}\"|g" "${prefs}"
+        else
+            sed -i "s|/>| ${key}=\"${val}\"/>|" "${prefs}"
+        fi
+    }
+
+    # Allow nginx (127.0.0.1) to reach Plex without auth token
+    _plex_pref_set "allowedNetworks" "127.0.0.1/32"
+    # Tell Plex the public HTTPS URL so it advertises it to clients
+    _plex_pref_set "customConnections" "https://${public_host}/plex"
+    # Disable Plex Relay — we have a direct HTTPS connection via nginx
+    _plex_pref_set "RelayEnabled" "0"
+    # Disable GDM (local network discovery) — not needed behind a proxy
+    _plex_pref_set "GdmEnabled" "0"
+
+    chown plex:plex "${PREFS_DIR}/Preferences.xml"
+
+    systemctl start plexmediaserver >> $log 2>&1
+    echo_progress_done "Plex reverse proxy preferences configured"
+fi
+
+# Install nginx config if nginx is present
+if [[ -f /install/.nginx.lock ]]; then
+    echo_progress_start "Installing nginx config for plex"
+    bash /etc/swizzin/scripts/nginx/plex.sh
+    systemctl reload nginx >> $log 2>&1
+    echo_progress_done "Nginx config for plex installed"
+fi
 
 touch /install/.plex.lock
 
