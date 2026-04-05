@@ -3,24 +3,30 @@
 
 # Install or re-install seerr from source (Node.js 22 + pnpm 10 required)
 seerr_build() {
-    echo_progress_start "Installing Node.js 22.x"
-    if ! command -v node > /dev/null 2>&1 || [[ "$(node --version | grep -oP '\d+' | head -1)" -lt 22 ]]; then
-        curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >> "$log" 2>&1 || {
-            echo_error "Failed to set up NodeSource repo"
-            exit 1
-        }
-        apt_install nodejs
+    echo_progress_start "Installing/upgrading Node.js 22.x"
+    # Always run the NodeSource setup to ensure the 22.x repo is registered,
+    # then install/upgrade — this handles the case where an older node is present.
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >> "$log" 2>&1 || {
+        echo_error "Failed to set up NodeSource 22.x repo"
+        exit 1
+    }
+    apt-get install -y nodejs >> "$log" 2>&1 || {
+        echo_error "Failed to install Node.js 22.x"
+        exit 1
+    }
+    node_ver="$(node --version | grep -oP '\d+' | head -1)"
+    if [[ "$node_ver" -lt 22 ]]; then
+        echo_error "Node.js 22.x required but got v${node_ver} after install"
+        exit 1
     fi
-    echo_progress_done "Node.js ready"
+    echo_progress_done "Node.js $(node --version) ready"
 
-    echo_progress_start "Installing pnpm 10.x"
-    if ! command -v pnpm > /dev/null 2>&1; then
-        npm install -g pnpm@10 >> "$log" 2>&1 || {
-            echo_error "Failed to install pnpm"
-            exit 1
-        }
-    fi
-    echo_progress_done "pnpm ready"
+    echo_progress_start "Installing/upgrading pnpm 10.x"
+    npm install -g pnpm@10 >> "$log" 2>&1 || {
+        echo_error "Failed to install pnpm"
+        exit 1
+    }
+    echo_progress_done "pnpm $(pnpm --version) ready"
 
     echo_progress_start "Cloning/updating Seerr repository"
     if [[ -d /opt/seerr/.git ]]; then
