@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Seerr helper functions for swizzin
+
+# Install or re-install seerr from source (Node.js 22 + pnpm 10 required)
+seerr_build() {
+    echo_progress_start "Installing Node.js 22.x"
+    if ! command -v node > /dev/null 2>&1 || [[ "$(node --version | grep -oP '\d+' | head -1)" -lt 22 ]]; then
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >> "$log" 2>&1 || {
+            echo_error "Failed to set up NodeSource repo"
+            exit 1
+        }
+        apt_install nodejs
+    fi
+    echo_progress_done "Node.js ready"
+
+    echo_progress_start "Installing pnpm 10.x"
+    if ! command -v pnpm > /dev/null 2>&1; then
+        npm install -g pnpm@10 >> "$log" 2>&1 || {
+            echo_error "Failed to install pnpm"
+            exit 1
+        }
+    fi
+    echo_progress_done "pnpm ready"
+
+    echo_progress_start "Cloning/updating Seerr repository"
+    if [[ -d /opt/seerr/.git ]]; then
+        git -C /opt/seerr fetch --all >> "$log" 2>&1
+        git -C /opt/seerr checkout main >> "$log" 2>&1
+        git -C /opt/seerr pull origin main >> "$log" 2>&1 || {
+            echo_error "Failed to pull latest Seerr source"
+            exit 1
+        }
+    else
+        mkdir -p /opt/seerr
+        git clone https://github.com/seerr-team/seerr.git /opt/seerr >> "$log" 2>&1 || {
+            echo_error "Failed to clone Seerr repository"
+            exit 1
+        }
+        git -C /opt/seerr checkout main >> "$log" 2>&1
+    fi
+    echo_progress_done "Repository ready"
+
+    echo_progress_start "Installing Seerr dependencies"
+    CYPRESS_INSTALL_BINARY=0 pnpm --dir /opt/seerr install --frozen-lockfile >> "$log" 2>&1 || {
+        echo_error "Failed to install Seerr dependencies"
+        exit 1
+    }
+    echo_progress_done "Dependencies installed"
+
+    echo_progress_start "Building Seerr"
+    pnpm --dir /opt/seerr build >> "$log" 2>&1 || {
+        echo_error "Failed to build Seerr"
+        exit 1
+    }
+    echo_progress_done "Seerr built successfully"
+
+    chown -R seerr:seerr /opt/seerr
+}
