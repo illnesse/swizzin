@@ -26,8 +26,7 @@ app_servicefile="$app_name.service"
 app_dir="/opt/${app_name^}"
 app_binary="${app_name^}"
 app_lockname="${app_name//-/}"
-app_branch="develop"
-app_ghrepo="Faustvii/Readarr"
+app_branch="develop" # Change to stable when available, tell users to migrate manually.
 
 if [ ! -d "$swiz_configdir" ]; then
     mkdir -p "$swiz_configdir"
@@ -44,26 +43,16 @@ _install() {
 
     echo_progress_start "Downloading release archive"
 
+    urlbase="https://$app_name.servarr.com/v1/update/$app_branch/updatefile?os=linux&runtime=netcore"
     case "$(_os_arch)" in
-        "amd64") arch_suffix="linux-musl-x64" ;;
-        "arm64") arch_suffix="linux-musl-arm64" ;;
-        "armhf") arch_suffix="linux-musl-arm" ;;
+        "amd64") dlurl="${urlbase}&arch=x64" ;;
+        "armhf") dlurl="${urlbase}&arch=arm" ;;
+        "arm64") dlurl="${urlbase}&arch=arm64" ;;
         *)
             echo_error "Arch not supported"
             exit 1
             ;;
     esac
-
-    dlurl=$(curl -s "https://api.github.com/repos/${app_ghrepo}/releases/latest" \
-        | grep "browser_download_url" \
-        | grep "${arch_suffix}\.tar\.gz\"" \
-        | head -1 \
-        | cut -d\" -f 4)
-
-    if [ -z "$dlurl" ]; then
-        echo_error "Could not find a release asset for arch ${arch_suffix} in ${app_ghrepo}"
-        exit 1
-    fi
 
     if ! curl "$dlurl" -L -o "/tmp/$app_name.tar.gz" >> "$log" 2>&1; then
         echo_error "Download failed, exiting"
