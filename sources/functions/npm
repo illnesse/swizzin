@@ -1,9 +1,15 @@
 #!/bin/bash
 #npm related functions
 
+# Node.js major version installed/maintained across swizzin. Bump this single value
+# to roll the whole fleet forward: every consumer (flood, overseerr, thelounge via
+# yarn_install, and the box-update node check) installs from here, and npm_update
+# upgrades any box on an older major on the next `box update`.
+NODE_VERSION=22
+
 function npm_install() {
     if [[ ! -f /etc/apt/sources.list.d/nodesource.list ]]; then
-        bash <(curl -sL https://deb.nodesource.com/setup_16.x) >> $log 2>&1 || {
+        bash <(curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x) >> $log 2>&1 || {
             echo_error "Failed to install node"
             return 1
         }
@@ -20,9 +26,9 @@ function npm_install() {
 
 function npm_update() {
     if [[ -f /etc/apt/sources.list.d/nodesource.list ]]; then
-        if [[ $(grep -m1 -oP 'node_\d+' /etc/apt/sources.list.d/nodesource.list | sed 's/node_//g') -lt "16" ]]; then
-            echo_progress_start "Upgrading nodejs to version 16 LTS"
-            bash <(curl -sL https://deb.nodesource.com/setup_16.x) >> $log 2>&1 || {
+        if [[ $(grep -m1 -oP 'node_\d+' /etc/apt/sources.list.d/nodesource.list | sed 's/node_//g') -lt "${NODE_VERSION}" ]]; then
+            echo_progress_start "Upgrading nodejs to version ${NODE_VERSION} LTS"
+            bash <(curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x) >> $log 2>&1 || {
                 echo_error "Failed to install node"
                 return 1
             }
