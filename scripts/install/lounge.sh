@@ -6,8 +6,9 @@ function _install() {
 
     useradd lounge --system -m -d /opt/lounge
 
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-    apt install -y nodejs
+    # Node is already installed at the shared NODE_VERSION by yarn_install/npm_install
+    # (called at the bottom of this script before _install). No per-app node setup here,
+    # which previously pinned lounge back to an older major than the rest of the fleet.
 
 #    npm -g config set user root || {
 #        echo_error "npm config step failed"
