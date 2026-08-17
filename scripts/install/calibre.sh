@@ -27,7 +27,6 @@ fi
 _install() {
     add-apt-repository -y ppa:savoury1/fonts
     apt_update
-    apt install -y libfreetype6
     apt_install xdg-utils wget xz-utils libxcb-xinerama0 libfontconfig libegl1 libgl1-mesa-glx libopengl0 libxcb-cursor0
     echo_progress_start "Installing calibre"
     if [[ $(_os_arch) = "amd64" ]]; then
@@ -39,7 +38,10 @@ _install() {
         sed -i "s|(2, 34)|(2, 11)|g" /tmp/calibre-installer.sh
         sed -i "s|(2, 35)|(2, 11)|g" /tmp/calibre-installer.sh
 
-        if ! bash /tmp/calibre-installer.sh install_dir=/opt >> $log 2>&1; then
+        # Pinned to 6.29.0: newer calibre needs freetype >= 2.11 (FT_Get_Color_Glyph_Paint)
+        # for Qt WebEngine, which focal's system freetype (2.10.x) doesn't provide. 6.29.0
+        # runs on the available freetype. Unpin once the base OS ships freetype >= 2.11.
+        if ! bash /tmp/calibre-installer.sh version=6.29.0 install_dir=/opt >> $log 2>&1; then
             echo_error "failed to install calibre"
             exit 1
         fi
