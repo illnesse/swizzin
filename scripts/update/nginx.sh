@@ -311,4 +311,15 @@ FIAC
     systemctl reload nginx
 }
 
+# Ensure nginx is actually installed before the lock-gated updater below. box update
+# previously skipped everything here whenever /install/.nginx.lock was absent, so a box
+# whose nginx install failed or was purged (lock removed) never self-healed on update.
+# If the binary is missing, (re)install it; scripts/install/nginx.sh recreates the lock
+# on success, which then lets update_nginx run.
+if ! command -v nginx > /dev/null 2>&1; then
+    echo_warn "nginx not installed - installing via box update"
+    rm -f /install/.nginx.lock
+    box install nginx
+fi
+
 if [[ -f /install/.nginx.lock ]]; then update_nginx; fi
