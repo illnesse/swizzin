@@ -3,31 +3,6 @@
 function update_nginx() {
     codename=$(lsb_release -cs)
 
-    # Sury nginx packages get pulled in by unrelated apt operations (e.g. removing
-    # libnginx-mod-http-geoip below) and leave nginx half-removed/broken. Detect and
-    # repair before doing anything else so the rest of this update has a working nginx
-    # to configure. See scripts/install/nginx.sh php-opcache removal for the root cause.
-    if dpkg -l 2> /dev/null | grep "nginx" | grep -q "sury"; then
-        echo_warn "Sury nginx packages detected - purging and reinstalling nginx"
-        apt_remove --purge 'nginx*' 'libnginx-mod-*'
-        apt-get update --fix-missing >> "${log}" 2>&1 || apt-get update >> "${log}" 2>&1
-        rm -f /install/.nginx.lock
-        box install nginx
-    elif ! command -v nginx > /dev/null 2>&1; then
-        echo_warn "nginx binary missing - reinstalling nginx"
-        rm -f /install/.nginx.lock
-        box install nginx
-    fi
-
-    # box install nginx's per-app config loop matches script filenames to lock files
-    # (scripts/nginx/qbittorrent.sh <-> .qbittorrent.lock), so it never re-applies for
-    # qBittorrent5, which reuses that same script but ships under .qbittorrent5.lock.
-    # Reapply it directly instead of doing a full qbittorrent5 reinstall.
-    if [[ -f /install/.qbittorrent5.lock ]] && [[ -f /install/.nginx.lock ]]; then
-        bash /etc/swizzin/scripts/nginx/qbittorrent.sh
-        systemctl reload nginx
-    fi
-
     if [[ $codename =~ ("xenial"|"stretch") ]]; then
         mcrypt=php-mcrypt
     else
