@@ -3,16 +3,8 @@
 function update_nginx() {
     codename=$(lsb_release -cs)
 
-    # This is the operation that breaks nginx: removing libnginx-mod-http-geoip makes apt
-    # pull in the Sury nginx and leaves nginx half-removed. It MUST run before the self-heal
-    # below so the same `box update` repairs the breakage it causes - otherwise the box
-    # finishes this run with nginx broken and only heals on the *next* update (which is why
-    # it used to need a second, manual `box update` over SSH to come back).
-    # It's preinstalled on the template, unused, and after it's gone this is a harmless no-op.
-    apt_remove libnginx-mod-http-geoip
-
-    # Sury nginx packages get pulled in by unrelated apt operations (the geoip removal above,
-    # and apt_upgrade earlier in `box update`) and leave nginx half-removed/broken. Detect and
+    # Sury nginx packages get pulled in by unrelated apt operations (e.g. removing
+    # libnginx-mod-http-geoip below) and leave nginx half-removed/broken. Detect and
     # repair before doing anything else so the rest of this update has a working nginx
     # to configure. See scripts/install/nginx.sh php-opcache removal for the root cause.
     if dpkg -l 2> /dev/null | grep "nginx" | grep -q "sury"; then
@@ -53,6 +45,9 @@ function update_nginx() {
             systemctl reload nginx
         fi
     fi
+
+    #not sure why this is preinstalled on the template, unused and caused upgrade issues so lets remove it
+    apt_remove libnginx-mod-http-geoip
 
     LIST="php8.0-fpm php8.0-cli php8.0-dev php8.0-xml php8.0-curl php8.0-mcrypt php8.0-mbstring php8.0-xml"
     #php-geoip php-json
