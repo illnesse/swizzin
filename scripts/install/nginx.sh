@@ -53,15 +53,6 @@ esac
 
 APT="nginx libnginx-mod-http-fancyindex subversion ssl-cert php-fpm libfcgi0ldbl php-cli php-xml php-curl php-xmlrpc php-json php-mbstring php-xml ${geoip} ${mcrypt}"
 
-# A prior nginx purge leaves behind the manually-created 50-mod-http-fancyindex.conf
-# symlink (swizzin makes it below, so it's package-unowned and survives apt purge).
-# On reinstall, nginx-core's postinst runs `nginx -t`, which aborts on that now-dangling
-# symlink before fancyindex is installed, breaking the whole apt transaction. Clear any
-# broken symlinks in modules-enabled first so the install can't trip over stale residue.
-if [[ -d /etc/nginx/modules-enabled ]]; then
-    find /etc/nginx/modules-enabled -xtype l -delete
-fi
-
 apt_install $APT
 mkdir -p /srv
 
