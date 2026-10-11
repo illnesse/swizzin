@@ -43,7 +43,6 @@ install_rar
 
 echo_progress_start "Cloning medusa source code"
 cd /opt/
-medusa >> ${log} 2>&1
 git clone --branch v1.0.22 --depth 1 https://github.com/pymedusa/Medusa.git medusa >> ${log} 2>&1
 # git clone https://github.com/pymedusa/Medusa.git medusa >> ${log} 2>&1
 chown -R ${user}:${user} medusa
