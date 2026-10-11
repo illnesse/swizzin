@@ -133,6 +133,12 @@ function update_nginx() {
         sed -i "s/fastcgi_pass .*/fastcgi_pass unix:\/run\/php\/php${phpversion}-fpm.sock;/g" $fix
     done
 
+    # boxes installed after GitHub dropped svn never got the theme
+    if [[ ! -f /srv/fancyindex/header.html ]]; then
+        . /etc/swizzin/sources/functions/fancyindex
+        fancyindex_theme_install && echo_info "Installed missing fancyindex theme"
+    fi
+
     if [[ -f /srv/fancyindex/header.html ]] && grep -q -e "-dark" -e "Nginx-Fancyindex" /srv/fancyindex/header.html; then
         sed -i 's/href="\/[^\/]*/href="\/fancyindex/g' /srv/fancyindex/header.html
     fi

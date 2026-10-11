@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Pinned Nginx-Fancyindex-Theme commit (combined light/dark theme)
+fancyindex_theme_rev="ee2e73c8dd1584b84ddad0cfcc44fbd903bdccd8"
+
+# Installs the fancyindex theme into /srv/fancyindex.
+# GitHub dropped svn access, so the theme is fetched as a tarball of the pinned commit.
+function fancyindex_theme_install() {
+    local dir="/srv/fancyindex"
+    local src="Nginx-Fancyindex-Theme-${fancyindex_theme_rev}/Nginx-Fancyindex"
+    mkdir -p "$dir"
+    if ! curl -fsSL "https://github.com/Naereen/Nginx-Fancyindex-Theme/archive/${fancyindex_theme_rev}.tar.gz" |
+        tar xz -C "$dir" --strip-components=2 "$src" >> "$log" 2>&1; then
+        echo_warn "Could not download the fancyindex theme, directory listings will be unstyled"
+        return 1
+    fi
+    # the theme references its assets under /Nginx-Fancyindex/, we serve it from /fancyindex/
+    sed -i 's#/Nginx-Fancyindex/#/fancyindex/#g' "$dir"/*.html "$dir"/*.js "$dir"/*.css
+}
