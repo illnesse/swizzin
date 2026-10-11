@@ -115,7 +115,8 @@ echo_progress_done() {
     else
         message="$1"
     fi
-    colorprint "" "${green}${dim}\u2714   ${bold}$message"
+    # literal check mark, not a \u escape: printf %b only expands those under a UTF-8 locale
+    colorprint "" "${green}${dim}✔   ${bold}$message"
 }
 export -f echo_progress_done
 

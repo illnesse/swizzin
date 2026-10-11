@@ -38,3 +38,14 @@ dependencies="whiptail git sudo curl wget lsof fail2ban apache2-utils tcl tcl-de
 #unquoted on purpose: $dependencies is a string, apt_install needs one argument per package
 #shellcheck disable=SC2086
 apt_install $dependencies
+
+# Fresh templates only ship C/C.UTF-8; ssh sessions forward LANG=en_US.UTF-8 and fall back to C without it
+if ! locale -a 2> /dev/null | grep -qix 'en_US.utf8'; then
+    echo_progress_start "Generating en_US.UTF-8 locale"
+    apt_install locales
+    locale-gen en_US.UTF-8 >> $log 2>&1
+    echo_progress_done "Locale generated"
+fi
+if ! grep -qs '^LANG=' /etc/default/locale; then
+    update-locale LANG=en_US.UTF-8 >> $log 2>&1
+fi
