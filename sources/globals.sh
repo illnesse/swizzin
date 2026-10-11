@@ -7,6 +7,8 @@
 
 #export log="/root/logs/swizzin.log"
 export log="/srv/tools/logs/output.log"
+# fresh boxes don't have /srv/tools yet (created by install/tools.sh), so make sure logging works before that
+[[ -f $log ]] || { mkdir -p "$(dirname "$log")" && touch "$log"; }
 
 ############################################
 # FUNCTIONS
