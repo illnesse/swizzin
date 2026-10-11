@@ -45,7 +45,14 @@ function _source_setup() {
         echo "Best of luck and please follow the contribution guidelines cheerio"
     else
         echo -e "...\tCloning swizzin repo to localhost"
-        git clone -b lxd  https://github.com/illnesse/swizzin.git /etc/swizzin >> ${log} 2>&1
+        # same branch mapping as `box update`; lsb_release may not be installed yet
+        os_version=$(. /etc/os-release 2> /dev/null && echo "$VERSION_ID")
+        case "$os_version" in
+            26.*) branch="ubuntu-26.04" ;;
+            24.*) branch="ubuntu-24.04" ;;
+            *) branch="lxd" ;;
+        esac
+        git clone -b "$branch" https://github.com/illnesse/swizzin.git /etc/swizzin >> ${log} 2>&1
         echo -e "\tSwizzin cloned!"
     fi
 
@@ -198,7 +205,7 @@ _os() {
         echo_error "Your distribution ($distribution) is not supported. Swizzin requires Ubuntu or Debian."
         exit 1
     fi
-    if [[ ! $codename =~ ^(bionic|stretch|buster|focal|bullseye|jammy|bookworm|noble)$ ]]; then
+    if [[ ! $codename =~ ^(bionic|stretch|buster|focal|bullseye|jammy|bookworm|noble|resolute)$ ]]; then
         echo_error "Your release ($codename) of $distribution is not supported."
         exit 1
     fi
