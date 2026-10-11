@@ -35,7 +35,15 @@ if [[ -n $(pidof apache2) ]]; then
     fi
 fi
 
+opcache="php-opcache"
+fcgi="libfcgi0ldbl"
 case $codename in
+    resolute)
+        mcrypt=
+        geoip=
+        opcache=             # built into PHP 8.5, no separate package
+        fcgi="libfcgi0t64"   # renamed in the t64 transition
+        ;;
     stretch)
         mcrypt="php-mcrypt"
         geoip="php-geoip"
@@ -51,7 +59,7 @@ case $codename in
         ;;
 esac
 
-APT="nginx libnginx-mod-http-fancyindex subversion ssl-cert php-fpm libfcgi0ldbl php-cli php-xml php-curl php-xmlrpc php-json php-mbstring php-opcache php-xml ${geoip} ${mcrypt}"
+APT="nginx libnginx-mod-http-fancyindex subversion ssl-cert php-fpm ${fcgi} php-cli php-xml php-curl php-xmlrpc php-json php-mbstring ${opcache} php-xml ${geoip} ${mcrypt}"
 
 apt_install $APT
 mkdir -p /srv
