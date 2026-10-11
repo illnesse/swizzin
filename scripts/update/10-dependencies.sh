@@ -35,4 +35,6 @@ fi
 #space-separated list of required GLOBAL SWIZZIN dependencies (NOT application specific ones)
 dependencies="whiptail git sudo curl wget lsof fail2ban apache2-utils tcl tcl-dev build-essential dirmngr apt-transport-https bc uuid-runtime jq net-tools gnupg2 cracklib-runtime unzip ccze"
 
-apt_install "${dependencies[@]}"
+#unquoted on purpose: $dependencies is a string, apt_install needs one argument per package
+#shellcheck disable=SC2086
+apt_install $dependencies
