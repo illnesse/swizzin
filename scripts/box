@@ -285,7 +285,18 @@ function _adduser() {
 
     echo "$user:$pass" > /root/"${user}".info
     if [[ $existing != "true" ]]; then
-        useradd "${user}" -m -G www-data -s /bin/bash >> $log 2>&1
+        # reuse the owner of a pre-existing home (e.g. userdata template mounted at /home) so files stay accessible
+        id_args=()
+        if [[ -d /home/${user} ]]; then
+            home_uid=$(stat -c %u /home/"${user}")
+            home_gid=$(stat -c %g /home/"${user}")
+            if [[ $home_uid -ne 0 ]] && ! getent passwd "$home_uid" > /dev/null; then
+                getent group "$home_gid" > /dev/null || groupadd -g "$home_gid" "${user}" >> $log 2>&1
+                id_args=(-u "$home_uid" -g "$home_gid")
+                echo_log_only "Reusing uid/gid ${home_uid}/${home_gid} of existing /home/${user}"
+            fi
+        fi
+        useradd "${user}" -m -G www-data -s /bin/bash "${id_args[@]}" >> $log 2>&1
     fi
     chpasswd <<< "${user}:${pass}" >> $log 2>&1
     if [[ -f /etc/htpasswd ]]; then
