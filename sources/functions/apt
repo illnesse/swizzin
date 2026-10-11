@@ -97,7 +97,9 @@ export -f _unset_apt_args
 #Prints the last apt log
 _get_last_apt_log() {
     # TODO replace with actual APT log instead to make this thing not reliant on logging to a file
-    tac $log | sed "/$_apt_logcheck_marker_text/q" | tac
+    # sed quits at the marker, so the first tac hits a closed pipe; under systemd SIGPIPE is ignored
+    # and tac prints "Broken pipe" instead of exiting silently
+    tac "$log" 2> /dev/null | sed "/$_apt_logcheck_marker_text/q" | tac
 }
 export -f _get_last_apt_log
 
