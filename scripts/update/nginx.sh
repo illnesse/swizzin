@@ -110,7 +110,10 @@ function update_nginx() {
                 -e "s/;opcache.memory_consumption=64/opcache.memory_consumption=128/" \
                 -e "s/;opcache.max_accelerated_files=2000/opcache.max_accelerated_files=4000/" \
                 -e "s/;opcache.revalidate_freq=2/opcache.revalidate_freq=240/" /etc/php/$version/fpm/php.ini
-            phpenmod -v $version opcache
+            # PHP 8.5+ has opcache built in, there is no module ini to enable
+            if [[ -f /etc/php/$version/mods-available/opcache.ini ]]; then
+                phpenmod -v $version opcache
+            fi
         fi
     done
 
