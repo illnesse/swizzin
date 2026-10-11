@@ -7,21 +7,15 @@ fi
 
 if [[ $(_os_distro) == "ubuntu" ]]; then
     #Ignore a found match if the line is commented out
-    if ! grep 'universe' /etc/apt/sources.list | grep -q -v '^#'; then
-        echo_info "Enabling universe repo"
-        add-apt-repository universe >> ${log} 2>&1
-        trigger_apt_update=true
-    fi
-    if ! grep 'multiverse' /etc/apt/sources.list | grep -q -v '^#'; then
-        echo_info "Enabling multiverse repo"
-        add-apt-repository multiverse >> ${log} 2>&1
-        trigger_apt_update=true
-    fi
-    if ! grep 'restricted' /etc/apt/sources.list | grep -q -v '^#'; then
-        echo_info "Enabling restricted repo"
-        add-apt-repository restricted >> ${log} 2>&1
-        trigger_apt_update=true
-    fi
+    #24.04+ keep the sources in deb822 format under sources.list.d (ubuntu.sources)
+    #-y: newer add-apt-repository waits for confirmation otherwise
+    for component in universe multiverse restricted; do
+        if ! grep -rhs "$component" /etc/apt/sources.list /etc/apt/sources.list.d/ | grep -q -v '^#'; then
+            echo_info "Enabling $component repo"
+            add-apt-repository -y "$component" >> ${log} 2>&1
+            trigger_apt_update=true
+        fi
+    done
 elif [[ $(_os_distro) == "debian" ]]; then
     if ! grep contrib /etc/apt/sources.list | grep -q -v '^#'; then
         echo_info "Enabling contrib repo"
