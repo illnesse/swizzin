@@ -17,6 +17,8 @@ inst=$(which mysql)
 user=$(cut -d: -f1 </root/.master.info)
 nextpass=$(cut -d: -f2 </root/.master.info)
 password=$(cut -d: -f2 </root/.master.info)
+# distro PHP 8.5 on 26.04, ondrej 8.2 elsewhere (see update/nginx.sh)
+[[ $(lsb_release -cs) == "resolute" ]] && php_keep="8.5" || php_keep="8.2"
 
 # Only check mysql version if mysql command exists
 if [[ -n $inst ]]; then
@@ -39,7 +41,7 @@ else
         echo_progress_done "Database installed"
     fi
     #Depends
-    apt_install unzip php8.2-mysql libxml2-dev php8.2-common php8.2-gd php8.2-curl php8.2-zip php8.2-xml php8.2-mbstring php8.2-fpm php8.2-cli
+    apt_install unzip php${php_keep}-mysql libxml2-dev php${php_keep}-common php${php_keep}-gd php${php_keep}-curl php${php_keep}-zip php${php_keep}-xml php${php_keep}-mbstring php${php_keep}-fpm php${php_keep}-cli
     #a2enmod rewrite > /dev/null 2>&1
     cd /tmp
 
@@ -102,7 +104,7 @@ else
     echo_progress_done "Permissions set"
 
     echo_progress_start "Configuring nginx and php"
-    sock="php8.2-fpm"
+    sock="php${php_keep}-fpm"
 
     cat > /etc/nginx/apps/nextcloud.conf << EOF
 # The following 2 rules are only needed for the user_webfinger app.

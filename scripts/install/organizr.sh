@@ -20,7 +20,9 @@ organizr_dir="/srv/organizr"
 
 ####### Source download
 function organizr_install() {
-    apt_install php8.2-mysql php8.2-sqlite3 sqlite3 php-xml php8.2-zip openssl php-curl
+    # distro PHP 8.5 on 26.04, ondrej 8.2 elsewhere (see update/nginx.sh)
+    [[ $(lsb_release -cs) == "resolute" ]] && php_keep="8.5" || php_keep="8.2"
+    apt_install php${php_keep}-mysql php${php_keep}-sqlite3 sqlite3 php-xml php${php_keep}-zip openssl php-curl
 
     if [[ ! -d $organizr_dir ]]; then
         echo_progress_start "Cloning the Organizr Repo"

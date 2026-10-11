@@ -9,14 +9,17 @@
 #     rm /etc/apt/sources.list.d/ondrej-ubuntu-nginx-mainline-focal.list
 # fi
 # # Ensure correct PPA by re-adding it
-if ! grep -rq "ondrej/nginx" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
-    echo_log_only "Adding ondrej/nginx PPA"
-    add-apt-repository -y ppa:ondrej/nginx
-fi
+# 26.04 (resolute) uses the distro nginx and PHP 8.5, no third-party repos
+if [[ $(lsb_release -cs) != "resolute" ]]; then
+    if ! grep -rq "ondrej/nginx" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+        echo_log_only "Adding ondrej/nginx PPA"
+        add-apt-repository -y ppa:ondrej/nginx
+    fi
 
-if ! grep -rq "ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
-    echo_log_only "Adding ondrej/php PPA"
-    add-apt-repository -y ppa:ondrej/php
+    if ! grep -rq "ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+        echo_log_only "Adding ondrej/php PPA"
+        add-apt-repository -y ppa:ondrej/php
+    fi
 fi
 
 # # Attempt to update main Ubuntu repository and Ondrej PHP PPA paths to use mirrors

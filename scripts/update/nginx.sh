@@ -21,17 +21,26 @@ function update_nginx() {
         fi
     fi
 
-    # Purge all installed versioned php packages except php8.2* and php7.3*
-    # Must happen before installing php8.2 to avoid dependency conflicts
+    # PHP version to keep: ondrej 8.2 on older releases, distro 8.5 on 26.04 (no third-party repos on resolute)
+    if [[ $codename == "resolute" ]]; then
+        php_keep="8.5"
+        LIST="php8.5-fpm php8.5-cli php8.5-xml php8.5-curl php8.5-mbstring"
+    else
+        php_keep="8.2"
+        LIST="php8.2-fpm php8.2-cli php8.2-dev php8.2-xml php8.2-curl php8.2-mcrypt php8.2-mbstring php8.2-xml"
+    fi
+
+    # Purge all installed versioned php packages except php${php_keep}* and php7.3*
+    # Must happen before installing php${php_keep} to avoid dependency conflicts
     # Only targets phpX.Y-* packages; leaves versionless meta-packages (php-common etc.) alone
-    mapfile -t php_pkgs < <(dpkg -l 'php*' 2>/dev/null | awk '/^ii/ {print $2}' | grep -E '^php[0-9]' | grep -Ev '^php(8\.2|7\.3)')
+    mapfile -t php_pkgs < <(dpkg -l 'php*' 2>/dev/null | awk '/^ii/ {print $2}' | grep -E '^php[0-9]' | grep -Ev "^php(${php_keep//./\\.}|7\\.3)")
     if [[ ${#php_pkgs[@]} -gt 0 ]]; then
-        echo "Purging non-8.2/7.3 PHP packages: ${php_pkgs[*]}"
+        echo "Purging non-${php_keep}/7.3 PHP packages: ${php_pkgs[*]}"
         apt_remove --purge "${php_pkgs[@]}"
     fi
 
-    # Remove php-xmlrpc if installed — old versions break php-common on upgrade
-    if dpkg -l php-xmlrpc 2>/dev/null | grep -q '^ii'; then
+    # Remove php-xmlrpc if installed — old versions break php-common on upgrade (ondrej releases only)
+    if [[ $codename != "resolute" ]] && dpkg -l php-xmlrpc 2>/dev/null | grep -q '^ii'; then
         echo "Purging php-xmlrpc to avoid php-common conflict"
         apt_remove --purge php-xmlrpc
     fi
@@ -42,14 +51,12 @@ function update_nginx() {
     for phpdir in /etc/php/*; do
         if [[ -d "$phpdir" ]]; then
             phpver=$(basename "$phpdir")
-            if [[ "$phpver" != "8.2" && "$phpver" != "7.3" ]]; then
+            if [[ "$phpver" != "$php_keep" && "$phpver" != "7.3" ]]; then
                 echo "Removing leftover /etc/php/$phpver"
                 rm -rf "$phpdir"
             fi
         fi
     done
-
-    LIST="php8.2-fpm php8.2-cli php8.2-dev php8.2-xml php8.2-curl php8.2-mcrypt php8.2-mbstring php8.2-xml"
 
     missing=()
     for dep in $LIST; do
@@ -58,7 +65,7 @@ function update_nginx() {
         fi
     done
 
-    if [[ ${missing[1]} != "" ]]; then
+    if [[ ${#missing[@]} -gt 0 ]]; then
         # echo_inf "Installing the following dependencies: ${missing[*]}" | tee -a $log
         apt_install "${missing[@]}"
     fi
@@ -70,9 +77,9 @@ function update_nginx() {
     phpversion=$(php_service_version)
     sock="php${phpversion}-fpm"
 
-    if [[ $phpversion != "8.2" ]]; then
+    if [[ $phpversion != "$php_keep" ]]; then
         echo "wrong php version: $phpversion cleaning up"
-        sudo update-alternatives --set php /usr/bin/php8.2
+        sudo update-alternatives --set php /usr/bin/php${php_keep}
     fi
 
     #    _apt_reset
