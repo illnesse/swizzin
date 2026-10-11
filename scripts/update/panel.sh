@@ -46,9 +46,7 @@ if [[ -f /install/.panel.lock ]]; then
     if ! grep -q SYSDCMNDS /etc/sudoers.d/panel; then
         cat > /etc/sudoers.d/panel << EOSUD
 #Defaults  env_keep -="HOME"
-Defaults:swizzin !logfile
-Defaults:swizzin !syslog
-Defaults:swizzin !pam_session
+$(sudoers_quiet_defaults swizzin)
 
 Cmnd_Alias   CMNDS = /usr/bin/quota
 Cmnd_Alias   SYSDCMNDS = /bin/systemctl start *, /bin/systemctl stop *, /bin/systemctl restart *, /bin/systemctl disable *, /bin/systemctl enable *
@@ -56,6 +54,7 @@ Cmnd_Alias   SYSDCMNDS = /bin/systemctl start *, /bin/systemctl stop *, /bin/sys
 swizzin     ALL = (ALL) NOPASSWD: CMNDS, SYSDCMNDS
 EOSUD
     fi
+    sudoers_strip_unsupported
     if grep -q -E "swizzin.*/bin/sh" /etc/passwd; then
         usermod swizzin -s /usr/sbin/nologin
     fi

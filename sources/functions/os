@@ -35,3 +35,31 @@ _os_arch() {
     dpkg --print-architecture
 }
 export -f _os_arch
+
+# True if sudo is sudo-rs (default on Ubuntu 26.04), which doesn't know the logfile/syslog/pam_session settings
+_sudo_is_rs() {
+    sudo --version 2> /dev/null | grep -q '^sudo-rs'
+}
+export -f _sudo_is_rs
+
+# Prints the Defaults lines that keep sudo calls by $1 out of the logs, if the installed sudo supports them.
+# Use inside sudoers heredocs: $(sudoers_quiet_defaults swizzin)
+sudoers_quiet_defaults() {
+    _sudo_is_rs && return
+    printf 'Defaults:%s !logfile\nDefaults:%s !syslog\nDefaults:%s !pam_session\n' "$1" "$1" "$1"
+}
+export -f sudoers_quiet_defaults
+
+# Removes those Defaults lines from existing sudoers.d files when sudo is sudo-rs (they print a warning on every call)
+sudoers_strip_unsupported() {
+    _sudo_is_rs || return 0
+    local f
+    for f in /etc/sudoers.d/*; do
+        [[ -f $f ]] || continue
+        if grep -qE '^Defaults:[^ ]+ !(logfile|syslog|pam_session)$' "$f"; then
+            sed -i -E '/^Defaults:[^ ]+ !(logfile|syslog|pam_session)$/d' "$f"
+            echo_log_only "Removed sudo-rs incompatible Defaults from $f"
+        fi
+    done
+}
+export -f sudoers_strip_unsupported

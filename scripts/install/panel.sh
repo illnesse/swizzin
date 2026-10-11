@@ -106,9 +106,7 @@ EOS
 
 cat > /etc/sudoers.d/panel << EOSUD
 #Defaults  env_keep -="HOME"
-Defaults:swizzin !logfile
-Defaults:swizzin !syslog
-Defaults:swizzin !pam_session
+$(sudoers_quiet_defaults swizzin)
 
 Cmnd_Alias   CMNDS = /usr/bin/quota
 Cmnd_Alias   SYSDCMNDS = /bin/systemctl start *, /bin/systemctl stop *, /bin/systemctl restart *, /bin/systemctl disable *, /bin/systemctl enable *

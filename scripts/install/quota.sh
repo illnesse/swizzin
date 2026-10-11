@@ -144,9 +144,7 @@ _installquota
 
 cat > /etc/sudoers.d/quota << EOSUD
 #Defaults  env_keep -="HOME"
-Defaults:www-data !logfile
-Defaults:www-data !syslog
-Defaults:www-data !pam_session
+$(sudoers_quiet_defaults www-data)
 
 Cmnd_Alias   QUOTA = /usr/bin/quota
 
