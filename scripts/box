@@ -143,15 +143,19 @@ function _update() {
 
     # Determine branch based on Ubuntu version
     ubuntu_version=$(lsb_release -rs 2>/dev/null || echo "0")
-    if [[ $ubuntu_version =~ ^24\. ]]; then
+    if [[ $ubuntu_version =~ ^26\. ]]; then
+        branch="ubuntu-26.04"
+        echo_info "Ubuntu 26.x detected, switching to branch: $branch"
+    elif [[ $ubuntu_version =~ ^24\. ]]; then
         branch="ubuntu-24.04"
         echo_info "Ubuntu 24.x detected, switching to branch: $branch"
     else
         branch="lxd"
     fi
 
-    git checkout "$branch" > /dev/null 2>&1
+    # fetch first so origin/$branch exists and checkout can create the local branch
     git fetch origin "$branch" > /dev/null 2>&1
+    git checkout "$branch" > /dev/null 2>&1
     git reset --hard origin/"$branch" >> "${log}" 2>&1
     echo_info "HEAD is now set to $(git log --pretty=format:'%h' -n1)"
     echo_progress_done "Local repository updated"
