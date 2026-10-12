@@ -92,7 +92,7 @@ Include /etc/proftpd/conf.d/
 PFC
 
 echo 'DefaultRoot ~' >> /etc/proftpd/proftpd.conf
-echo 'ServerIdent on "hosted by https://seedit.me"' >> /etc/proftpd/proftpd.conf
+echo 'ServerIdent on "hosted by https://seedit4.me"' >> /etc/proftpd/proftpd.conf
 echo_progress_done "done"
 
 echo_progress_start "Setting up SSL"
